@@ -5,7 +5,10 @@ const { token } = require('./config.json');
 // Initiate client
 const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
 
-// Initial commands from ./commands folder
+// Initiate events from ./events folder
+const eventFiles = fs.readdirSync('./events').filter(file => file.endsWith('.js'));
+
+// Initiate commands from ./commands folder
 client.commands = new Collection();
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
 
@@ -17,27 +20,15 @@ for (const file of commandFiles) {
 	client.commands.set(command.data.name, command);
 }
 
-/* Client is initialized and ready */
-client.once('ready', () => {
-	console.log('Ready!');
-  client.user.setActivity('These Hands', { type: 'COMPETING' });
-});
-
-/* On user interaction with slash commands */
-client.on('interactionCreate', async interaction => {
-	if (!interaction.isCommand()) return;
-
-  const command = client.commands.get(interaction.commandName);
-
-	if (!command) return;
-
-  // Valid Command - try to execute
-	try {
-		await command.execute(interaction);
-	} catch (error) {
-		console.error(error);
-		await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
+/* Cycle ./events folder and execute on event call */
+for (const file of eventFiles) {
+	const event = require(`./events/${file}`);
+	if (event.once) {
+		client.once(event.name, (...args) => event.execute(...args));
+	} else {
+		client.on(event.name, (...args) => event.execute(...args));
 	}
-});
+}
 
+// Login bot
 client.login(token);
