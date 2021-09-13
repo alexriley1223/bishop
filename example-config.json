@@ -1,0 +1,6 @@
+{
+  "clientId": "clientIdFromDiscordBot",
+  "guildId": "guildIdFromServer",
+  "token": "tokenFromDiscordBot",
+  "lolDevToken": "LoL Api Token (if using League API)"
+}
