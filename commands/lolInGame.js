@@ -18,7 +18,7 @@ let seasonsData = require('../assets/lol/constants/seasons.json');
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('lolingame')
-		.setDescription('Check LoL user stats!')
+		.setDescription('Check LoL user in game statistics!')
     .addStringOption(option =>
       option.setName('name')
       .setDescription('Name of the summoner.')
