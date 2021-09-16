@@ -6,7 +6,7 @@ const { token } = require('./config.json');
 const commandPath = './commands';
 
 // Initiate client
-const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
+const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_VOICE_STATES] });
 
 // Initiate events from ./events folder
 const eventFiles = fs.readdirSync('./events').filter(file => file.endsWith('.js'));
@@ -49,6 +49,7 @@ for (const file of commandFiles) {
 /* Cycle ./events folder and execute on event call */
 for (const file of eventFiles) {
 	const event = require(`./events/${file}`);
+
 	if (event.once) {
 		client.once(event.name, (...args) => event.execute(...args));
 	} else {
