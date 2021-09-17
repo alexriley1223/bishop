@@ -19,13 +19,14 @@ module.exports = {
 		if(!newState.member.user.bot) {
 			// Define member id
 			const id = newState.id.toString();
-			const username = newState.member.user.username
+			const username = newState.member.user.username;
 
-			/* User is joining a channel for the first time */
-			if (oldState.channelId == null) {
+			/* User is joining a main channel for the first time */
+			/* User joins other channel from AFK Channel */
+			if ((oldState.channelId == null && newState.channelId !== '604874357650620436') || (oldState.channelId == '604874357650620436' && newState.channelId !== null)) {
 				var date = Date.now();
 
-				// Fetch tag
+				// Add record or update record
 				Points.upsert(
 					{
 						user: id,
@@ -38,8 +39,10 @@ module.exports = {
 				});
 			}
 
-			/* User has fully disconnected */
-			if (newState.channelId == null) {
+			/* User joins AFK channel from base */
+			/* User has fully disconnected from a main channel */
+			if ((oldState.channelId !== null && newState.channelId == '604874357650620436') || (oldState.channelId !== '604874357650620436' && newState.channelId == null)) {
+				// Update point values to stop point tracking
 				var date = Date.now();
 
 				Points.findOne({ where:
@@ -57,19 +60,10 @@ module.exports = {
 
 						// Add onto the current points the user has
 						Points.update({ points: points },{ where: { user: id }});
+
+						console.log(`Points updated for ${id}.`);
 					}
 				});
-
-			}
-
-			/* User has changed voice states inside of a channel */
-			if (newState.channelId == oldState.channelId) {
-
-			}
-
-			/* User has switched channels */
-			if (newState.channelId !== oldState.channelId) {
-
 			}
 
 		}
