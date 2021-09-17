@@ -98,18 +98,18 @@ module.exports = {
 			          )
 			          .setTimestamp()
 			          .setFooter('Pulled using the DEX Bot');
-			        interaction.reply({ embeds: [currentGame], ephmeral: true });
+			        interaction.reply({ embeds: [currentGame] });
 						}
 					})
 					.catch(function (error) {
 						// Error Handling
 						console.log(error);
-						interaction.reply(`Summoner ${summoner.name} is currently not in a game!`);
+						interaction.reply({ content: `Summoner ${summoner.name} is currently not in a game!`, ephemeral: true });
 					});
       })
       .catch(function (error) {
         // Error Handling
-        interaction.reply({content: 'Unable to find a summoner with that name.', ephmeral: true});
+        interaction.reply({ content: 'Unable to find a summoner with that name.', ephemeral: true });
         console.log(error);
       });
 		//

@@ -29,7 +29,7 @@ module.exports = {
 		Points.findAll({ order: [['points', 'DESC']], attributes: ['username', 'points'], limit: 10 }).then((allUsers) => {
 
 			allUsers.forEach((element, index) => { currentGame.addField(`${index+1}. ${element.dataValues['username']}`, element.dataValues['points'].toString()) });
-			interaction.reply({ embeds: [currentGame], ephmeral: true });
+			interaction.reply({ embeds: [currentGame], ephemeral: true });
 
 		});
 

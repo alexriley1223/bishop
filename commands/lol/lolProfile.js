@@ -43,16 +43,16 @@ module.exports = {
                 .setThumbnail(`http://ddragon.leagueoflegends.com/cdn/11.18.1/img/profileicon/${summoner.profileIconId}.png`)
                 .setTimestamp()
                 .setFooter('Pulled using the DEX Bot');
-              interaction.reply({embeds: [summonerProfile], ephmeral: false});
+              interaction.reply({ embeds: [summonerProfile] });
           })
           .catch(function (error) {
-            interaction.reply({content: 'Unable to pull summoner data.', ephmeral: true});
+            interaction.reply({ content: 'Unable to pull summoner data.', ephemeral: true });
             console.log(error);
           });
       })
       .catch(function (error) {
         // Error Handling
-        interaction.reply({content: 'Unable to find a summoner with that name.', ephmeral: true});
+        interaction.reply({ content: 'Unable to find a summoner with that name.', ephemeral: true });
         console.log(error);
       });
 		//
