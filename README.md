@@ -25,8 +25,12 @@ Install dependencies
   npm install
 ```
 
-Sync deploy commands
+Create database tables on first initialization of bot
+```bash
+  node initialize-database.js
+```
 
+Sync deploy commands
 ```bash
   node deploy-commands.js
 ```
@@ -37,18 +41,3 @@ Run Client
 ```
 
 This will be made cleaner in the future.
-
-
-## Usage/Examples
-
-### End-User commands in Discord
-
-Display badge with LoL summoner information. Currently only supports NA1.
-```bash
-  /lolprofile :name
-```
-
-Display badge about a summoner's current game. Currently only supports NA1.
-```bash
-  /lolingame :name
-```
