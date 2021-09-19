@@ -1,5 +1,5 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
-const { MessageEmbed, Permissions } = require('discord.js');
+const { Permissions } = require('discord.js');
 const Sequelize = require('sequelize');
 
 const sequelize = new Sequelize('database', 'username', 'password', {
