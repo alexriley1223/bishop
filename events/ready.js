@@ -16,7 +16,11 @@ module.exports = {
 	execute(client) {
 		console.log(`Ready! Logged in as ${client.user.tag}`);
 
+		// Sync userpoints database
 		Points.sync();
+
+		// REFACTOR: use fs to cycle jobs folder and generate this dynamically
+		const dailyPoints = require('../jobs/addDailyPoints.js')(Points, client, sequelize);
 
 		// Set activity under member list
     client.user.setActivity('These Hands', { type: 'COMPETING' });
