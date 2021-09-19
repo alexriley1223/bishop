@@ -124,6 +124,8 @@ dist
 
 config.json
 
+# Database
+backup/
 database.sqlite
 
 # End of https://www.toptal.com/developers/gitignore/api/node

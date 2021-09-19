@@ -3,7 +3,7 @@ const cron = require('cron');
 module.exports = (Points, client, sequelize) => {
     // Make cron job for adding in weekly points
     // 0 12 * * *
-    addRandomPointsDaily = new cron.CronJob('0 12 * * *', () => {
+    var addRandomPointsDaily = new cron.CronJob('0 12 * * *', () => {
       Points.findAll({ order: sequelize.random(), limit: 1 }).then(function(user){
 
         // Generate random points and calculated point value

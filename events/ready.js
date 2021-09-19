@@ -22,6 +22,8 @@ module.exports = {
 		// REFACTOR: use fs to cycle jobs folder and generate this dynamically
 		const dailyPoints = require('../jobs/addDailyPoints.js')(Points, client, sequelize);
 
+		const createDatabaseBackup = require('../jobs/createDatabaseBackup.js')();
+
 		// Set activity under member list
     client.user.setActivity('These Hands', { type: 'COMPETING' });
 
