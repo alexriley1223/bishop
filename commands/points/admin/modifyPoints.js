@@ -1,5 +1,5 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
-const { MessageEmbed } = require('discord.js');
+const { MessageEmbed, Permissions } = require('discord.js');
 const Sequelize = require('sequelize');
 
 const sequelize = new Sequelize('database', 'username', 'password', {
@@ -33,7 +33,7 @@ module.exports = {
         .setRequired(true)),
  	execute(interaction) {
     /* Check if user has valid role */
-    if (interaction.member.roles.cache.find(r => r.id === '604875683507994644')) {
+    if (interaction.member.permissions.has([Permissions.FLAGS.ADMINISTRATOR])) {
       const type = interaction.options.getString('type');
       const username = interaction.options.getString('user');
       const amount = interaction.options.getInteger('amount');
