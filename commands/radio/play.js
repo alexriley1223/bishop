@@ -23,13 +23,16 @@ module.exports = {
 			// Results found
 			if(searchResults.items[0])
 			{
+				// Defer reply
+				await interaction.deferReply({ ephemeral: true });
+
 				let title = searchResults.items[0].title;
 				let videoId = searchResults.items[0].id;
 				let duration = searchResults.items[0].duration;
 				let thumbnail = searchResults.items[0].bestThumbnail.url;
 
 				const nowPlaying = new MessageEmbed()
-					.setColor('#0099ff')
+					.setColor('#863DFF')
 					.setTitle('Now Playing')
 					.setDescription(`${title} (${duration})`)
 					.setThumbnail(thumbnail)
@@ -44,8 +47,11 @@ module.exports = {
 
 				const downloadVideo = async (videoId) => {
 					return new Promise((resolve, reject) => {
-						let dlvideo = ytdl('https://www.youtube.com/watch?v=' + videoId, { filter: 'audioonly', quality: 'lowestaudio' }).pipe(createWriteStream('tmp/' + videoId + '.mp3'));
-						return resolve(dlvideo);
+						let dlvideo = ytdl('https://www.youtube.com/watch?v=' + videoId, { filter: 'audioonly', quality: 'lowestaudio' });
+						dlvideo.pipe(createWriteStream('tmp/' + videoId + '.mp3'));
+						dlvideo.on("finish", function(){
+							return resolve(dlvideo);
+						});
 					});
 				};
 
@@ -69,12 +75,6 @@ module.exports = {
 
 					let resource = createAudioResource(createReadStream(join(__dirname, `../../tmp/${videoId}.mp3`)));
 
-					//let resource = createAudioResource(createReadStream(join(__dirname, `../../tmp/${videoId}.mp3`)));
-					while(!resource)
-					{
-						console.log('Waiting for resource');
-					}
-
 				 	player.play(resource);
 
 					console.log(`Now playing ${title}`);
@@ -82,9 +82,9 @@ module.exports = {
 					// Subscribe the connection to the audio player (will play audio on the voice connection)
 					const subscription = connection.subscribe(player);
 
-					await interaction.reply({ embeds: [nowPlaying] , ephemeral: true });
+					await interaction.editReply({ embeds: [nowPlaying], ephemeral: true });
 				} else {
-					await interaction.reply({content: 'Unable to play or find audio.', ephemeral: true});
+					await interaction.editReply({content: 'Unable to play or find audio.', ephemeral: true});
 				}
 			} else {
 				await interaction.reply({content: 'Unable to play or find audio.', ephemeral: true});
