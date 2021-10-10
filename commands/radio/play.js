@@ -9,7 +9,7 @@ const ytdl = require('ytdl-core');
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('play')
-		.setDescription('Play an audio track given a title/name.')
+		.setDescription('Play a youtube audio track given a title/name.')
     .addStringOption(option =>
       option.setName('name')
       .setDescription('Name of song or video to be played')
