@@ -13,7 +13,7 @@ module.exports = {
 
       if(connection) {
         connection.destroy();
-        await interaction.reply({ content: `Bot has been stopped!`, ephemeral: true });
+        await interaction.reply({ content: `Bot has been stopped!` });
       } else {
         await interaction.reply({ content: `Bot is not currently playing any audio!`, ephemeral: true });
       }
