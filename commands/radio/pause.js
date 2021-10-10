@@ -13,7 +13,7 @@ module.exports = {
 
       if(connection) {
 				connection._state.subscription.player.pause();
-        await interaction.reply({ content: `Bot has been paused!`, ephemeral: true });
+        await interaction.reply({ content: `Bot has been paused!` });
       } else {
         await interaction.reply({ content: `Bot is not currently playing any audio!`, ephemeral: true });
       }
