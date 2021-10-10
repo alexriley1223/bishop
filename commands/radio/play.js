@@ -5,6 +5,7 @@ const { createReadStream, createWriteStream, existsSync, mkdirSync } = require('
 const { join } = require('path');
 const ytsr = require('ytsr');
 const ytdl = require('ytdl-core');
+const { musicChannelId } = require('../../config.json');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -19,7 +20,7 @@ module.exports = {
     if (interaction.member.permissions.has([Permissions.FLAGS.ADMINISTRATOR])) {
 
 			/* Check if message is in the Music channel */
-			if(interaction.channelId == '896769403482423336') {
+			if(interaction.channelId == musicChannelId) {
 				const searchResults = await ytsr(interaction.options.getString('name'), { limit: 1 });
 
 				// Results found
