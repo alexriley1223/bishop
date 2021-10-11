@@ -16,6 +16,8 @@ To run this project, you will need to add the following environment variables to
 
 `lolDevToken` - If using LoL API
 
+`musicChannelId` - ID of channel to funnel all music commands through
+
 
 ## Run Locally
 
