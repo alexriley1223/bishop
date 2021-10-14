@@ -86,7 +86,7 @@ module.exports = {
 
 
 							const currentGame = new MessageEmbed()
-			          .setColor('#308c22')
+			          .setColor('#863DFF')
 			          .setTitle(`${summoner.name}'s Current Game`)
 								.setDescription(`Currently playing ${currentChampion} in ${mode} on ${map} in ${type}`)
 								.setThumbnail(`http://ddragon.leagueoflegends.com/cdn/11.18.1/img/profileicon/${summoner.profileIconId}.png`)

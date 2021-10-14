@@ -33,7 +33,7 @@ module.exports = {
               }
 
               const summonerProfile = new MessageEmbed()
-                .setColor('#0099ff')
+                .setColor('#863DFF')
                 .setTitle(summoner.name)
                 .addFields(
                   { name: 'Summoner Level', value: summoner.summonerLevel.toString() },

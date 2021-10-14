@@ -19,7 +19,7 @@ module.exports = {
  	execute(interaction) {
 		/* Generate embed message for leaderboard */
 		const currentGame = new MessageEmbed()
-			.setColor('#308c22')
+			.setColor('#863DFF')
 			.setTitle(`DEX Points Leaderboard`)
 			.setDescription(`Current leaderboard of points for the DEX Discord.`)
 			.setTimestamp()
