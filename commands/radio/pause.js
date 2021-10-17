@@ -10,9 +10,10 @@ module.exports = {
  	async execute(interaction) {
     /* Check if user has valid role */
 		if (interaction.member.permissions.has([Permissions.FLAGS.ADMINISTRATOR])) {
-      const connection = getVoiceConnection(interaction.channel.guild.id);
 
 			if(interaction.channelId == musicChannelId) {
+	      const connection = getVoiceConnection(interaction.channel.guild.id);
+
 	      if(connection) {
 					connection._state.subscription.player.pause();
 	        await interaction.reply({ content: `Bot has been paused!` });
