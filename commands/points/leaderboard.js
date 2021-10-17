@@ -1,5 +1,6 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { MessageEmbed } = require('discord.js');
+const { color } = require('../../config.json');
 const Sequelize = require('sequelize');
 
 const sequelize = new Sequelize('database', 'username', 'password', {
@@ -19,7 +20,7 @@ module.exports = {
  	execute(interaction) {
 		/* Generate embed message for leaderboard */
 		const currentGame = new MessageEmbed()
-			.setColor('#863DFF')
+			.setColor(color)
 			.setTitle(`DEX Points Leaderboard`)
 			.setDescription(`Current leaderboard of points for the DEX Discord.`)
 			.setTimestamp()

@@ -5,7 +5,7 @@ const { createReadStream, createWriteStream, existsSync, mkdirSync } = require('
 const { join } = require('path');
 const ytsr = require('ytsr');
 const ytdl = require('ytdl-core');
-const { musicChannelId } = require('../../config.json');
+const { musicChannelId, color } = require('../../config.json');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -35,7 +35,7 @@ module.exports = {
 					let thumbnail = searchResults.items[0].bestThumbnail.url;
 
 					const nowPlaying = new MessageEmbed()
-						.setColor('#863DFF')
+						.setColor(color)
 						.setTitle('Now Playing')
 						.setDescription(`${title} (${duration})`)
 						.setThumbnail(thumbnail)

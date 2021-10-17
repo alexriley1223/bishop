@@ -1,5 +1,5 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
-const { lolDevToken } = require('../../config.json');
+const { lolDevToken, color } = require('../../config.json');
 const { MessageEmbed } = require('discord.js');
 const axios = require('axios');
 
@@ -33,7 +33,7 @@ module.exports = {
               }
 
               const summonerProfile = new MessageEmbed()
-                .setColor('#863DFF')
+                .setColor(color)
                 .setTitle(summoner.name)
                 .addFields(
                   { name: 'Summoner Level', value: summoner.summonerLevel.toString() },
