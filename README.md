@@ -18,6 +18,10 @@ To run this project, you will need to add the following environment variables to
 
 `musicChannelId` - ID of channel to funnel all music commands through
 
+`gameUpdatesChannelId` - ID of channel to post game updates to
+
+`color` - Color to use for embedded messages
+
 
 ## Run Locally
 
