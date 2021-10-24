@@ -27,6 +27,11 @@ module.exports = {
 		var userPoints = 0;
 		var betAmount = interaction.options.getInteger('amount');
 
+		if(betAmount < 0 ) {
+			await interaction.reply({ content: 'You can\'t bet a negative amount.', ephemeral: true });
+			return;
+		}
+
 		/* Check if have enough points to bet with */
 		await Points.findOne({ where:
 			{
