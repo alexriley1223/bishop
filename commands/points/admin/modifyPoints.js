@@ -65,7 +65,7 @@ module.exports = {
           // Send response
           interaction.reply({content: `Successfully modified points of ${username}!`, ephemeral: true});
 				} else {
-          interaction.reply({content: 'User not found.', ephemeral: true});
+          interaction.reply({content: `User not found: ${username}`, ephemeral: true});
         }
 			});
     } else {
