@@ -97,12 +97,12 @@ module.exports = {
 			if(calculateValue(yourHand) == 21) {
 				if(calculateValue(dealerHand) != 21) {
 					// Dealer didn't blackjack, you win!
-					var newPoints = preWinLosePoints + (betAmount*1.5);
+					var newPoints = preWinLosePoints + Math.floor(betAmount*1.5);
 					Points.update({ points: newPoints },{ where: { user: userId }});
 
 					// Send to casino updates if not a dummy game
 					if(betAmount > 0) {
-						interaction.client.channels.cache.get(gameUpdatesChannelId).send(`<@${userId}> won ${betAmount*1.5} points on Solo Blackjack!`);
+						interaction.client.channels.cache.get(gameUpdatesChannelId).send(`<@${userId}> won ${Math.floor(betAmount*1.5)} points on Solo Blackjack!`);
 					}
 
 					await interaction.reply({ content: 'Your hand is: \n' + buildHandString(yourHand) + '\n Natural Winner!', ephemeral: true });
