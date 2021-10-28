@@ -9,6 +9,7 @@ const sequelize = new Sequelize('database', 'username', 'password', {
 });
 
 require('./models/userPoints.js')(sequelize, Sequelize.DataTypes);
+require('./models/vouchers.js')(sequelize, Sequelize.DataTypes);
 
 const force = process.argv.includes('--force') || process.argv.includes('-f');
 
