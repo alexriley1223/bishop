@@ -1,6 +1,6 @@
 {
   "name": "discord-bot",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "Discord bot using Discord.js for D3X server.",
   "main": "app.js",
   "scripts": {
