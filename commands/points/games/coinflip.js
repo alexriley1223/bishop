@@ -35,7 +35,7 @@ module.exports = {
     var userPoints = 0;
 
     /* Check if bet amount is within the limits */
-    if(betAmount > maxbet || betAmount < 0) {
+    if(betAmount > maxBet || betAmount < 0) {
       await interaction.reply({ content: 'You can\'t bet less than 0 or more than ' + maxBet + '!', ephemeral: true });
       return;
     }
