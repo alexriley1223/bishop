@@ -25,6 +25,12 @@ module.exports = {
       const amount = interaction.options.getInteger('amount');
       const code = Array.from(Array(20), () => Math.floor(Math.random() * 36).toString(36)).join('');
 
+			/* Make sure point amount is greater than 0 */
+			if(amount < 1) {
+				await interaction.reply({content: 'Point amount must be greater than 0.', ephemeral: true});
+				return;
+			}
+
       await Vouchers.create(
         {
           code: code,
