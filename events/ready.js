@@ -8,7 +8,7 @@ const sequelize = new Sequelize('database', 'username', 'password', {
 	storage: 'database.sqlite',
 });
 
-const Points = require('../models/userPoints.js')(sequelize, Sequelize.DataTypes);
+const Points = require('@models/userPoints.js')(sequelize, Sequelize.DataTypes);
 
 module.exports = {
 	name: 'ready',
@@ -20,9 +20,9 @@ module.exports = {
 		Points.sync();
 
 		// REFACTOR: use fs to cycle jobs folder and generate this dynamically
-		const dailyPoints = require('../jobs/addDailyPoints.js')(Points, client, sequelize);
+		const dailyPoints = require('@jobs/addDailyPoints.js')(Points, client, sequelize);
 
-		const createDatabaseBackup = require('../jobs/createDatabaseBackup.js')();
+		const createDatabaseBackup = require('@jobs/createDatabaseBackup.js')();
 
 		// Set activity under member list
     client.user.setActivity('These Hands', { type: 'COMPETING' });

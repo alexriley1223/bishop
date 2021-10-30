@@ -1,7 +1,7 @@
 const { Permissions, MessageEmbed } = require('discord.js');
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { getVoiceConnection  } = require('@discordjs/voice');
-const { musicChannelId } = require('../../config.json');
+const { musicChannelId } = require('@config/channels.json');
 
 module.exports = {
 	data: new SlashCommandBuilder()

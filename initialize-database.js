@@ -1,3 +1,5 @@
+// Register aliases
+require('module-alias/register');
 const Sequelize = require('sequelize');
 
 const sequelize = new Sequelize('database', 'username', 'password', {
@@ -8,8 +10,8 @@ const sequelize = new Sequelize('database', 'username', 'password', {
 	storage: 'database.sqlite',
 });
 
-require('./models/userPoints.js')(sequelize, Sequelize.DataTypes);
-require('./models/vouchers.js')(sequelize, Sequelize.DataTypes);
+require('@models/userPoints.js')(sequelize, Sequelize.DataTypes);
+require('@models/vouchers.js')(sequelize, Sequelize.DataTypes);
 
 const force = process.argv.includes('--force') || process.argv.includes('-f');
 

@@ -10,7 +10,7 @@ const sequelize = new Sequelize('database', 'username', 'password', {
 	storage: 'database.sqlite',
 });
 
-const Vouchers = require('../../../models/vouchers.js')(sequelize, Sequelize.DataTypes);
+const Vouchers = require('@models/vouchers.js')(sequelize, Sequelize.DataTypes);
 
 module.exports = {
 	data: new SlashCommandBuilder()

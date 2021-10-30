@@ -1,19 +1,18 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
-const { lolDevToken, color } = require('../../config.json');
+const { lolDevToken } = require('@config/api.json');
+const { color } = require('@config/bot.json');
 const { MessageEmbed } = require('discord.js');
 
 const axios = require('axios');
 const fs = require('fs');
 
 /* Static JSON */
-let championData = require('../../assets/lol/constants/champion.json');
-let gameModeData = require('../../assets/lol/constants/gameModes.json');
-let gameTypeData = require('../../assets/lol/constants/gameTypes.json');
-let mapsData = require('../../assets/lol/constants/maps.json');
-let queuesData = require('../../assets/lol/constants/queues.json');
-let seasonsData = require('../../assets/lol/constants/seasons.json');
-
-//console.log(championData.data['Aatrox']);
+let championData = require('@assets/lol/constants/champion.json');
+let gameModeData = require('@assets/lol/constants/gameModes.json');
+let gameTypeData = require('@assets/lol/constants/gameTypes.json');
+let mapsData = require('@assets/lol/constants/maps.json');
+let queuesData = require('@assets/lol/constants/queues.json');
+let seasonsData = require('@assets/lol/constants/seasons.json');
 
 module.exports = {
 	data: new SlashCommandBuilder()

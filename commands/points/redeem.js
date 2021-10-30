@@ -1,5 +1,6 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const Sequelize = require('sequelize');
+const { announcementsChannelId } = require('@config/channels.json');
 
 const sequelize = new Sequelize('database', 'username', 'password', {
 	host: 'localhost',
@@ -9,8 +10,8 @@ const sequelize = new Sequelize('database', 'username', 'password', {
 	storage: 'database.sqlite',
 });
 
-const Vouchers = require('../../models/vouchers.js')(sequelize, Sequelize.DataTypes);
-const Points = require('../../models/userPoints.js')(sequelize, Sequelize.DataTypes);
+const Vouchers = require('@models/vouchers.js')(sequelize, Sequelize.DataTypes);
+const Points = require('@models/userPoints.js')(sequelize, Sequelize.DataTypes);
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -49,8 +50,7 @@ module.exports = {
       // Update points
       await user.increment('points', { by: addPoints });
 
-      // REFACTOR: add announcements channel id to config
-      interaction.client.channels.cache.get('767982180961484820').send(`<@${interaction.user.id}> just redeemed a voucher for ${addPoints} points!`);
+      interaction.client.channels.cache.get(announcementsChannelId).send(`<@${interaction.user.id}> just redeemed a voucher for ${addPoints} points!`);
 
       await interaction.reply({ content: 'You have redeemed a voucher for ' + addPoints + ' points!', ephemeral: true });
     }

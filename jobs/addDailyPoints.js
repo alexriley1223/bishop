@@ -1,4 +1,5 @@
 const cron = require('cron');
+const { announcementsChannelId } = require('@config/channels.json');
 
 module.exports = (Points, client, sequelize) => {
     // Make cron job for adding in weekly points
@@ -14,7 +15,7 @@ module.exports = (Points, client, sequelize) => {
         Points.update({ points: points },{ where: { user: user[0].user }});
 
         // Send @ message in announcements channel
-        client.channels.cache.get('767982180961484820').send(`Congrats <@${user[0].user}>! You have won ${randPoints} points for today's free points raffle! 👏🏻`);
+        client.channels.cache.get(announcementsChannelId).send(`Congrats <@${user[0].user}>! You have won ${randPoints} points for today's free points raffle! 👏🏻`);
 
         console.log(`RAFFLE: Adding ${randPoints} points to ${user[0].username}.`);
       });

@@ -1,7 +1,7 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { MessageEmbed, MessageActionRow, MessageButton, MessageComponentInteraction } = require('discord.js');
 const Sequelize = require('sequelize');
-const { gameUpdatesChannelId } = require('../../../config.json');
+const { gameUpdatesChannelId } = require('@config/channels.json');
 
 const sequelize = new Sequelize('database', 'username', 'password', {
 	host: 'localhost',
@@ -11,7 +11,7 @@ const sequelize = new Sequelize('database', 'username', 'password', {
 	storage: 'database.sqlite',
 });
 
-const Points = require('../../../models/userPoints.js')(sequelize, Sequelize.DataTypes);
+const Points = require('@models/userPoints.js')(sequelize, Sequelize.DataTypes);
 
 module.exports = {
 	data: new SlashCommandBuilder()

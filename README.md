@@ -1,44 +1,37 @@
 
-# DEX Node Discord Bot
-
-Discord bot for testing API integrations with Discord's API for the https://d3x.me/ Discord server.
-
+# Bishop Discord Bot
+Feature-packed discord bot for the https://d3x.me/ Discord server.
 
 ## Config Variables
+To run this project, you will need to add the following environment variables to your configi/xxxxxx.json files
 
-To run this project, you will need to add the following environment variables to your config.json file
+**api.json**
+`lolDevToken` - If using LoL API
 
+**bot.json**
 `clientId` - Bot User ID
 
 `guildId` - Server ID
 
 `token` - Discord Bot Secret
 
-`lolDevToken` - If using LoL API
+`color` - Color to use for embedded messages
 
+**channels.json**
 `musicChannelId` - ID of channel to funnel all music commands through
 
-`gameUpdatesChannelId` - ID of channel to post game updates to
+`gameUpdatesChannelId` - ID of channel to post casino/game updates to
 
-`color` - Color to use for embedded messages
+`announcementsChannelId` - ID of channel for general announcements
+
+`afkChannelId` - ID of AFK channel
 
 
 ## Run Locally
 
-Install dependencies
-
+Run the included upgrade command
 ```bash
-  npm install
-```
-
-Create database tables on first initialization of bot
-```bash
-  node initialize-database.js
-```
-
-Sync deploy commands
-```bash
-  node deploy-commands.js
+  npm run upgrade
 ```
 
 Run Client
@@ -46,4 +39,9 @@ Run Client
   node app.js
 ```
 
-This will be made cleaner in the future.
+## Prepare for Deployment
+If you have two bots (one production, one development), run the command below to unregister commands from the development bot.
+
+```bash
+  node unregister-commands.js
+```

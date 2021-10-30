@@ -1,9 +1,11 @@
 // Please refactor this awful mess
 // Only used for dev testing but still
+// Register aliases
+require('module-alias/register');
 
 const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v9');
-const { clientId, guildId, token } = require('./config.json');
+const { clientId, guildId, token } = require('@config/bot.json');
 
 var commands = [];
 

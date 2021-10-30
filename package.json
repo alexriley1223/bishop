@@ -1,13 +1,22 @@
 {
   "name": "discord-bot",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Discord bot using Discord.js for D3X server.",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "preupgrade": "echo \"Pulling latest changes\" & git pull",
+    "upgrade": "echo \"Upgrading bot dependencies.\" & npm install && echo \"Syncing Database\" & node initialize-database.js && echo \"Registering new commands\" & node deploy-commands.js",
+    "postupgrade": "echo \"Update complete. Please check if anything needs to be updated with config files\""
   },
   "author": "klingebot",
   "license": "ISC",
+  "_moduleAliases": {
+    "@root":  ".",
+    "@config":  "./config",
+    "@assets":  "./assets",
+    "@models":  "./models",
+    "@jobs":    "./jobs"
+  },
   "dependencies": {
     "@discordjs/builders": "^0.5.0",
     "@discordjs/opus": "^0.6.0",
@@ -20,6 +29,7 @@
     "fs": "^0.0.1-security",
     "git-tag-version": "^1.3.1",
     "libsodium-wrappers": "^0.7.9",
+    "module-alias": "^2.2.2",
     "path": "^0.12.7",
     "pretty-ms": "^7.0.1",
     "sequelize": "^6.6.5",

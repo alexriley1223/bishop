@@ -122,7 +122,10 @@ dist
 .yarn/install-state.gz
 .pnp.*
 
-config.json
+# Config
+config/api.json
+config/bot.json
+config/channels.json
 
 # Database
 backup/

@@ -1,5 +1,6 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
-const { lolDevToken, color } = require('../../config.json');
+const { lolDevToken } = require('@config/api.json');
+const { color } = require('@config/bot.json');
 const { MessageEmbed } = require('discord.js');
 const axios = require('axios');
 

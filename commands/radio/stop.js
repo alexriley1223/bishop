@@ -1,7 +1,7 @@
 const { Permissions } = require('discord.js');
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { getVoiceConnection } = require('@discordjs/voice');
-const { musicChannelId } = require('../../config.json');
+const { musicChannelId } = require('@config/channels.json');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -13,7 +13,7 @@ module.exports = {
 
 			if(interaction.channelId == musicChannelId) {
 				const connection = getVoiceConnection(interaction.channel.guild.id);
-				
+
 	      if(connection) {
 	        connection.destroy();
 	        await interaction.reply({ content: `Bot has been stopped!` });

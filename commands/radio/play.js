@@ -5,7 +5,8 @@ const { createReadStream, createWriteStream, existsSync, mkdirSync } = require('
 const { join } = require('path');
 const ytsr = require('ytsr');
 const ytdl = require('ytdl-core');
-const { musicChannelId, color } = require('../../config.json');
+const { color } = require('@config/bot.json');
+const { musicChannelId } = require('@config/channels.json');
 
 module.exports = {
 	data: new SlashCommandBuilder()

@@ -1,7 +1,10 @@
+// Register aliases
+require('module-alias/register');
+
 const fs = require('fs');
 const path = require('path');
 const { Client, Collection, Intents } = require('discord.js');
-const { token } = require('./config.json');
+const { token } = require('@config/bot.json');
 
 const commandPath = './commands';
 

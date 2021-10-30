@@ -8,7 +8,8 @@ const sequelize = new Sequelize('database', 'username', 'password', {
 	storage: 'database.sqlite',
 });
 
-const Points = require('../models/userPoints.js')(sequelize, Sequelize.DataTypes);
+const Points = require('@models/userPoints.js')(sequelize, Sequelize.DataTypes);
+const { afkChannelId } = require('@config/channels.json');
 
 module.exports = {
 	name: 'voiceStateUpdate',
@@ -23,7 +24,7 @@ module.exports = {
 
 			/* User is joining a main channel for the first time */
 			/* User joins other channel from AFK Channel */
-			if ((oldState.channelId == null && newState.channelId !== '604874357650620436') || (oldState.channelId == '604874357650620436' && newState.channelId !== null)) {
+			if ((oldState.channelId == null && newState.channelId !== afkChannelId) || (oldState.channelId == afkChannelId && newState.channelId !== null)) {
 				var date = Date.now();
 
 				// Add record or update record
@@ -41,7 +42,7 @@ module.exports = {
 
 			/* User joins AFK channel from base */
 			/* User has fully disconnected from a main channel */
-			if ((oldState.channelId !== null && newState.channelId == '604874357650620436') || (oldState.channelId !== '604874357650620436' && newState.channelId == null)) {
+			if ((oldState.channelId !== null && newState.channelId == afkChannelId) || (oldState.channelId !== afkChannelId && newState.channelId == null)) {
 				// Update point values to stop point tracking
 				var date = Date.now();
 
