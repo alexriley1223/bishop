@@ -3,6 +3,6 @@ module.exports = (Sequelize) => {
     host: 'localhost',
     dialect: 'sqlite',
     logging: false,
-    storage: 'database.sqlite',
+    storage: './database/database.sqlite',
   });
 };

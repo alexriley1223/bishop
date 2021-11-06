@@ -3,6 +3,7 @@ require('module-alias/register');
 const Sequelize = require('sequelize');
 const sequelize = require('@database/database.js')(Sequelize);
 
+// Models
 require('@models/userPoints.js')(sequelize, Sequelize.DataTypes);
 require('@models/vouchers.js')(sequelize, Sequelize.DataTypes);
 

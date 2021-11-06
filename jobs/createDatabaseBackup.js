@@ -14,7 +14,7 @@ module.exports = function() {
         fs.mkdirSync(path.join(__dirname, '../backup'));
       }
       // Make backup
-      fs.copyFile(path.join(__dirname, '../database.sqlite'), path.join(__dirname, `../backup/database_${currentDate}.sqlite`), (err) => {
+      fs.copyFile(path.join(__dirname, '../database/database.sqlite'), path.join(__dirname, `../backup/database_${currentDate}.sqlite`), (err) => {
         if(err) {
           console.log('FATAL: Database failed to backup.\n' + err);
         } else {
