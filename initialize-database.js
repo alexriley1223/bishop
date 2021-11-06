@@ -1,14 +1,7 @@
 // Register aliases
 require('module-alias/register');
 const Sequelize = require('sequelize');
-
-const sequelize = new Sequelize('database', 'username', 'password', {
-	host: 'localhost',
-	dialect: 'sqlite', // FUTURE: change to mysql or similar
-	logging: false,
-	// only for SQLite
-	storage: 'database.sqlite',
-});
+const sequelize = require('@database/database.js')(Sequelize);
 
 require('@models/userPoints.js')(sequelize, Sequelize.DataTypes);
 require('@models/vouchers.js')(sequelize, Sequelize.DataTypes);

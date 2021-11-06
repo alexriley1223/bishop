@@ -15,7 +15,8 @@
     "@config":  "./config",
     "@assets":  "./assets",
     "@models":  "./models",
-    "@jobs":    "./jobs"
+    "@jobs":    "./jobs",
+    "@database": "./database"
   },
   "dependencies": {
     "@discordjs/builders": "^0.5.0",

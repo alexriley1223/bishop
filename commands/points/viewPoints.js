@@ -1,14 +1,6 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const Sequelize = require('sequelize');
-
-const sequelize = new Sequelize('database', 'username', 'password', {
-	host: 'localhost',
-	dialect: 'sqlite', // FUTURE: change to mysql or similar
-	logging: false,
-	// only for SQLite
-	storage: 'database.sqlite',
-});
-
+const sequelize = require('@database/database.js')(Sequelize);
 const Points = require('@models/userPoints.js')(sequelize, Sequelize.DataTypes);
 
 module.exports = {
