@@ -134,4 +134,7 @@ database.sqlite
 # Temp files
 tmp/
 
+# PM2 Deployment
+pm2.config.js
+
 # End of https://www.toptal.com/developers/gitignore/api/node
