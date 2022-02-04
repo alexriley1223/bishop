@@ -1,6 +1,7 @@
 const Sequelize = require('sequelize');
 const sequelize = require('@database/database.js')(Sequelize);
 const Points = require('@models/userPoints.js')(sequelize, Sequelize.DataTypes);
+const modules = require('@config/modules.json');
 
 module.exports = {
 	name: 'ready',
@@ -8,11 +9,14 @@ module.exports = {
 	execute(client) {
 		console.log(`Ready! Logged in as ${client.user.tag}`);
 
-		// Sync userpoints database
-		Points.sync();
+		// Check if points module is enabled (REFACTOR WHEN MORE JOBS ARE IN)
+		if(modules.points) {
+			console.log('Points Jobs Enabled');
+			// Sync userpoints database
+			Points.sync();
 
-		// REFACTOR: use fs to cycle jobs folder and generate this dynamically
-		const dailyPoints = require('@jobs/addDailyPoints.js')(Points, client, sequelize);
+			const dailyPoints = require('@jobs/addDailyPoints.js')(Points, client, sequelize);
+		}
 
 		const createDatabaseBackup = require('@jobs/createDatabaseBackup.js')();
 

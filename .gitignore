@@ -127,6 +127,7 @@ config/api.json
 config/bot.json
 config/channels.json
 config/roles.json
+config/modules.json
 
 # Database
 backup/

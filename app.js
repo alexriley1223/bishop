@@ -5,6 +5,7 @@ const fs = require('fs');
 const path = require('path');
 const { Client, Collection, Intents } = require('discord.js');
 const { token } = require('@config/bot.json');
+const modules = require('@config/modules.json');
 
 const commandPath = './commands';
 
@@ -12,7 +13,17 @@ const commandPath = './commands';
 const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_VOICE_STATES] });
 
 // Initiate events from ./events folder
-const eventFiles = fs.readdirSync('./events').filter(file => file.endsWith('.js'));
+var eventFiles = fs.readdirSync('./events').filter(file => file.endsWith('.js'));
+
+// Add points events if points module is enabled (REFACTOR WHEN MORE EVENTS EXIST)
+if(modules.points) {
+	console.log('Registering Points Events');
+	pointsEvents = fs.readdirSync('./events/points').filter(file => file.endsWith('.js'));
+	for(var i = 0; i < pointsEvents.length; i++) {
+		pointsEvents[i] = '/points/' + pointsEvents[i];
+	}
+	eventFiles = eventFiles.concat(pointsEvents);
+}
 
 // Initiate commands from ./commands folder
 client.commands = new Collection();
@@ -38,10 +49,38 @@ const getAllCommands = function(dirPath, arrayOfCommands) {
 	return arrayOfCommands;
 }
 
-// Recursively pull all commands from commandPath folder and subfolders
-const commandFiles = getAllCommands(commandPath);
+/*
+	* Recursively pulls all directories and checks if enabled in modules config
+	* @param {string} dirPath Directory of parent folder
+	* @param {object} arrayOfCommands Return object for list of file paths
+ */
+const getModulatedCommands = function(dirPath, arrayOfCommands) {
+	let commandFiles = fs.readdirSync(dirPath);
 
-/* Cycle ./commands folder and add each command to collection */
+	arrayOfCommands = arrayOfCommands || []
+
+	Object.keys(modules).forEach(function(key) {
+		if(modules[key]) {
+			console.log('Enabling ' + key);
+			var commandIndex = commandFiles.indexOf(key);
+
+			if (fs.statSync(dirPath + "/" + commandFiles[commandIndex]).isDirectory()) {
+				arrayOfCommands = getAllCommands(dirPath + "/" + commandFiles[commandIndex], arrayOfCommands);
+			} else {
+				arrayOfCommands.push(path.join(dirPath, "/", commandFiles[commandIndex]));
+			}
+		} else {
+			console.log('Disabling ' + key);
+		}
+	});
+
+	return arrayOfCommands;
+}
+
+// Recursively pull all commands from commandPath folder and subfolders
+const commandFiles = getModulatedCommands(commandPath);
+
+/* Cycle enabled commands and add each command to collection */
 for (const file of commandFiles) {
 	const command = require(`./${file}`);
 	// Set a new item in the Collection
@@ -49,7 +88,7 @@ for (const file of commandFiles) {
 	client.commands.set(command.data.name, command);
 }
 
-/* Cycle ./events folder and execute on event call */
+/* Cycle enabled events and execute on event call */
 for (const file of eventFiles) {
 	const event = require(`./events/${file}`);
 
