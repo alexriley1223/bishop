@@ -2,5 +2,6 @@
   "musicChannelId": "",
   "gameUpdatesChannelId": "",
   "announcementsChannelId": "",
-  "afkChannelId": ""
+  "afkChannelId": "",
+  "botUpdatesChannel": ""
 }
