@@ -1,6 +1,6 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { lolDevToken } = require('@config/api.json');
-const { color } = require('@config/bot.json');
+const { color, name } = require('@config/bot.json');
 const { MessageEmbed } = require('discord.js');
 const axios = require('axios');
 
@@ -43,7 +43,7 @@ module.exports = {
                 )
                 .setThumbnail(`http://ddragon.leagueoflegends.com/cdn/11.18.1/img/profileicon/${summoner.profileIconId}.png`)
                 .setTimestamp()
-                .setFooter('Pulled using the DEX Bot');
+                .setFooter(`Pulled using the ${name} Bot`);
               interaction.reply({ embeds: [summonerProfile] });
           })
           .catch(function (error) {

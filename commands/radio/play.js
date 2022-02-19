@@ -5,7 +5,7 @@ const { createReadStream, createWriteStream, existsSync, mkdirSync } = require('
 const { join } = require('path');
 const ytsr = require('ytsr');
 const ytdl = require('ytdl-core');
-const { color } = require('@config/bot.json');
+const { color, name } = require('@config/bot.json');
 const { musicChannelId } = require('@config/channels.json');
 
 module.exports = {
@@ -41,7 +41,7 @@ module.exports = {
 						.setDescription(`${title} (${duration})`)
 						.setThumbnail(thumbnail)
 						.setTimestamp()
-						.setFooter('Pulled using the DEX Bot');
+						.setFooter(`Pulled using the ${name} Bot`);
 
 					// Create directory if not exist
 		      if(!existsSync(join(__dirname, '../../tmp'))) {

@@ -1,6 +1,6 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { MessageEmbed } = require('discord.js');
-const { color } = require('@config/bot.json');
+const { color, name } = require('@config/bot.json');
 const Sequelize = require('sequelize');
 const sequelize = require('@database/database.js')(Sequelize);
 const Points = require('@models/userPoints.js')(sequelize, Sequelize.DataTypes);
@@ -13,10 +13,10 @@ module.exports = {
 		/* Generate embed message for leaderboard */
 		const currentGame = new MessageEmbed()
 			.setColor(color)
-			.setTitle(`DEX Points Leaderboard`)
-			.setDescription(`Current leaderboard of points for the DEX Discord.`)
+			.setTitle(`${name} Points Leaderboard`)
+			.setDescription(`Current leaderboard of points for the ${name} Discord.`)
 			.setTimestamp()
-			.setFooter('Pulled using the DEX Bot');
+			.setFooter(`Pulled using the ${name} Bot`);
 
 		// Pull all tag entries
 		Points.findAll({ order: [['points', 'DESC']], attributes: ['username', 'points'], limit: 10 }).then((allUsers) => {

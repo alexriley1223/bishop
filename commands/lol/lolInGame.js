@@ -1,6 +1,6 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { lolDevToken } = require('@config/api.json');
-const { color } = require('@config/bot.json');
+const { color, name } = require('@config/bot.json');
 const { MessageEmbed } = require('discord.js');
 
 const axios = require('axios');
@@ -96,7 +96,7 @@ module.exports = {
 									{ name: 'Allies', value: allies.join(', '), inline: true }
 			          )
 			          .setTimestamp()
-			          .setFooter('Pulled using the DEX Bot');
+			          .setFooter(`Pulled using the ${name} Bot`);
 			        interaction.reply({ embeds: [currentGame] });
 						}
 					})

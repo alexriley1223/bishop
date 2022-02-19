@@ -1,7 +1,7 @@
 const roles = require('@config/roles.json');
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { MessageEmbed } = require('discord.js');
-const { color } = require('@config/bot.json');
+const { color, name } = require('@config/bot.json');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -13,15 +13,15 @@ module.exports = {
 		/* Generate embed message for role list */
 		const roleList = new MessageEmbed()
 			.setColor(color)
-			.setTitle(`DEX Roles`)
+			.setTitle(`${name} Roles`)
 			.setDescription(`Current attainable roles via point values.`)
 			.setTimestamp()
-			.setFooter('Pulled using the DEX Bot');
+			.setFooter(`Pulled using the ${name} Bot`);
 
     /* Loop through all available roles */
     for(var i = 0; i < roles.roles.length; i++) {
       var serverRole = interaction.guild.roles.cache.find(r => r.id === roles.roles[i].id);
-			
+
       if(serverRole) {
         roleList.addField(`${serverRole.name}`, roles.roles[i].amount + ' Points');
       } else {
