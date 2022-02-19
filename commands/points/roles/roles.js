@@ -21,18 +21,16 @@ module.exports = {
     /* Loop through all available roles */
     for(var i = 0; i < roles.roles.length; i++) {
       var serverRole = interaction.guild.roles.cache.find(r => r.id === roles.roles[i].id);
-
+			
       if(serverRole) {
         roleList.addField(`${serverRole.name}`, roles.roles[i].amount + ' Points');
       } else {
         await interaction.reply({ content: 'Unable to fetch a role in role list!', ephemeral: true });
-        hasError = true;
+        return;
       }
     }
 
     /* Show leaderboard if no error */
-    if(!hasError) {
-      await interaction.reply({ embeds: [roleList], ephemeral: true });
-    }
+    await interaction.reply({ embeds: [roleList], ephemeral: true });
 	},
 };
