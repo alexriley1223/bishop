@@ -7,11 +7,6 @@ module.exports = {
 		.setName('version')
 		.setDescription('Show current bot version'),
  	execute(interaction) {
-    /* Check if user has valid role */
-    if (interaction.member.permissions.has([Permissions.FLAGS.ADMINISTRATOR])) {
-      interaction.reply({content: `Bot is currently running on v${gitVersion()}!`, ephemeral: true});
-    } else {
-      interaction.reply({content: 'You do not have permissions to run this command.', ephemeral: true});
-    }
+    interaction.reply({content: `Bot is currently running on v${gitVersion()}!`, ephemeral: true});
 	},
 };

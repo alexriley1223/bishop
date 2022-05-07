@@ -24,44 +24,39 @@ module.exports = {
         .setDescription('User to modify points of')
         .setRequired(true)),
  	execute(interaction) {
-    /* Check if user has valid role */
-    if (interaction.member.permissions.has([Permissions.FLAGS.ADMINISTRATOR])) {
-      const type = interaction.options.getString('type');
-      const username = interaction.options.getString('user');
-      const amount = interaction.options.getInteger('amount');
-			Points.findOne({ where:
-				{
-					username: username
-				}
-			}).then(function(user){
-				if(user) {
-					var points = user.points;
+    const type = interaction.options.getString('type');
+    const username = interaction.options.getString('user');
+    const amount = interaction.options.getInteger('amount');
+		Points.findOne({ where:
+			{
+				username: username
+			}
+		}).then(function(user){
+			if(user) {
+				var points = user.points;
 
-          switch(type) {
-            case 'add':
-              points += amount;
-              break;
+        switch(type) {
+          case 'add':
+            points += amount;
+            break;
 
-            case 'remove':
-              points -= amount;
-              break;
+          case 'remove':
+            points -= amount;
+            break;
 
-            case 'set':
-              points = amount;
-              break;
-          }
-
-					// Add onto the current points the user has
-					Points.update({ points: points },{ where: { username: username }});
-
-          // Send response
-          interaction.reply({content: `Successfully modified points of ${username}!`, ephemeral: true});
-				} else {
-          interaction.reply({content: `User not found: ${username}`, ephemeral: true});
+          case 'set':
+            points = amount;
+            break;
         }
-			});
-    } else {
-      interaction.reply({content: 'You do not have permissions to run this command.', ephemeral: true});
-    }
+
+				// Add onto the current points the user has
+				Points.update({ points: points },{ where: { username: username }});
+
+        // Send response
+        interaction.reply({content: `Successfully modified points of ${username}!`, ephemeral: true});
+			} else {
+        interaction.reply({content: `User not found: ${username}`, ephemeral: true});
+      }
+		});
 	},
 };

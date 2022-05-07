@@ -13,28 +13,22 @@ module.exports = {
         .setDescription('Voucher amount')
         .setRequired(true)),
  	async execute(interaction) {
-    if (interaction.member.permissions.has([Permissions.FLAGS.ADMINISTRATOR])) {
-      const amount = interaction.options.getInteger('amount');
-      const code = Array.from(Array(20), () => Math.floor(Math.random() * 36).toString(36)).join('');
+    const amount = interaction.options.getInteger('amount');
+    const code = Array.from(Array(20), () => Math.floor(Math.random() * 36).toString(36)).join('');
 
-			/* Make sure point amount is greater than 0 */
-			if(amount < 1) {
-				await interaction.reply({content: 'Point amount must be greater than 0.', ephemeral: true});
-				return;
-			}
+		/* Make sure point amount is greater than 0 */
+		if(amount < 1) {
+			await interaction.reply({content: 'Point amount must be greater than 0.', ephemeral: true});
+			return;
+		}
 
-      await Vouchers.create(
-        {
-          code: code,
-          amount: amount,
-        }
-      ).then(function(){
-        interaction.reply({content: 'Generated code: ' + code + '. Amount: ' + amount, ephemeral: true});
-      });
-
-    } else {
-      await interaction.reply({content: 'You do not have permissions to run this command.', ephemeral: true});
-    }
-
+    await Vouchers.create(
+      {
+        code: code,
+        amount: amount,
+      }
+    ).then(function(){
+      interaction.reply({content: 'Generated code: ' + code + '. Amount: ' + amount, ephemeral: true});
+    });
 	},
 };
