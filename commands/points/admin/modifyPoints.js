@@ -20,7 +20,7 @@ module.exports = {
 				}, {
 					name: 'set',
 					value: 'set'
-				})
+				}))
     .addIntegerOption(option =>
       option.setName('amount')
         .setDescription('Amount to modify')
@@ -28,7 +28,7 @@ module.exports = {
     .addStringOption(option =>
       option.setName('user')
         .setDescription('User to modify points of')
-        .setRequired(true))),
+        .setRequired(true)),
  	execute(interaction) {
     const type = interaction.options.getString('type');
     const username = interaction.options.getString('user');
