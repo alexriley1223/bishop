@@ -18,8 +18,13 @@ module.exports = {
       option.setName('side')
         .setDescription('Side of the coin to pick')
         .setRequired(true)
-        .addChoice('heads', 'heads')
-        .addChoice('tails', 'tails')),
+				.addChoices({
+					name: 'heads',
+					value: 'heads'
+				}, {
+					name: 'tails',
+					value: 'tails'
+				})),
  	async execute(interaction) {
 
     var userId = interaction.user.id;

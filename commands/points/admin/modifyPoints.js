@@ -11,9 +11,16 @@ module.exports = {
       option.setName('type')
         .setDescription('Type of modification to execute')
         .setRequired(true)
-        .addChoice('add', 'add')
-        .addChoice('remove', 'remove')
-        .addChoice('set', 'set'))
+				.addChoices({
+					name: 'add',
+					value: 'add'
+				}, {
+					name: 'remove',
+					value: 'remove'
+				}, {
+					name: 'set',
+					value: 'set'
+				})
     .addIntegerOption(option =>
       option.setName('amount')
         .setDescription('Amount to modify')
