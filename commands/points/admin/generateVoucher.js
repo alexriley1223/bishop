@@ -1,5 +1,4 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
-const { Permissions } = require('discord.js');
 const Sequelize = require('sequelize');
 const sequelize = require('@database/database.js')(Sequelize);
 const Vouchers = require('@models/vouchers.js')(sequelize, Sequelize.DataTypes);

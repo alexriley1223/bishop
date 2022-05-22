@@ -1,8 +1,6 @@
-const { Permissions, MessageEmbed } = require('discord.js');
+const { MessageEmbed } = require('discord.js');
 const { SlashCommandBuilder } = require('@discordjs/builders');
-const { generateDependencyReport, joinVoiceChannel, createAudioPlayer, createAudioResource, StreamType, NoSubscriberBehavior } = require('@discordjs/voice');
-const { createReadStream, createWriteStream, existsSync, mkdirSync } = require('fs');
-const { join } = require('path');
+const { joinVoiceChannel, createAudioPlayer, createAudioResource, NoSubscriberBehavior, getVoiceConnection } = require('@discordjs/voice');
 const ytsr = require('ytsr');
 const ytdl = require('ytdl-core');
 const { color, name } = require('@config/bot.json');
@@ -12,85 +10,95 @@ module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('play')
 		.setDescription('Play a youtube audio track given a title/name.')
-    .addStringOption(option =>
-      option.setName('name')
-      .setDescription('Name of song or video to be played')
-      .setRequired(true)),
+    .addStringOption(option => option.setName('name').setDescription('Name of song or video to be played').setRequired(true)),
  	async execute(interaction) {
-		const searchResults = await ytsr(interaction.options.getString('name'), { limit: 1 });
+		var searchSong = {};
+		var nowPlaying;
 
-		// Results found
-		if(searchResults.items[0])
-		{
-			// Defer reply
-			await interaction.deferReply();
+		const existingConnection = getVoiceConnection(interaction.channel.guild.id);
 
-			let title = searchResults.items[0].title;
-			let videoId = searchResults.items[0].id;
-			let duration = searchResults.items[0].duration;
-			let thumbnail = searchResults.items[0].bestThumbnail.url;
+		const searchFilters = await ytsr.getFilters(interaction.options.getString('name'));
+		const searchFilter = searchFilters.get('Type').get('Video');
+		const searchResults = await ytsr(searchFilter.url, { limit: 1 });
 
-			const nowPlaying = new MessageEmbed()
+		// Check if ytsr returned any results
+		// TODO: Add to limit and make user choice
+		if(searchResults.items[0]) {
+			searchSong.title = searchResults.items[0].title;
+			searchSong.videoId = searchResults.items[0].id;
+			searchSong.duration = searchResults.items[0].duration;
+			searchSong.thumbnail = searchResults.items[0].bestThumbnail.url;
+
+			nowPlaying = new MessageEmbed()
 				.setColor(color)
 				.setTitle('Now Playing')
-				.setDescription(`${title} (${duration})`)
-				.setThumbnail(thumbnail)
+				.setDescription(`${searchSong.title} (${searchSong.duration})`)
+				.setThumbnail(searchSong.thumbnail)
 				.setTimestamp()
 				.setFooter(`Pulled using the ${name} Bot`);
-
-			// Create directory if not exist
-      if(!existsSync(join(__dirname, '../../tmp'))) {
-        console.log('Creating tmp directory');
-        mkdirSync(join(__dirname, '../../tmp'));
-      }
-
-			const downloadVideo = async (videoId) => {
-				return new Promise((resolve, reject) => {
-					let dlvideo = ytdl('https://www.youtube.com/watch?v=' + videoId, { filter: 'audioonly', quality: 'lowestaudio' });
-					dlvideo.pipe(createWriteStream('tmp/' + videoId + '.mp3'));
-					dlvideo.on("finish", function(){
-						return resolve(dlvideo);
-					});
-				});
-			};
-
-			var video;
-
-			// Check if video ID already exists
-			if(existsSync(join(__dirname, `../../tmp/${videoId}.mp3`))) {
-				video = true;
-      } else {
-				video = await downloadVideo(videoId);
-			}
-
-			if (video) {
-				const connection = joinVoiceChannel({
-					channelId: interaction.member.voice.channel.id,
-					guildId: interaction.channel.guild.id,
-					adapterCreator: interaction.channel.guild.voiceAdapterCreator,
-				});
-
-				const player = createAudioPlayer({
-					behaviors: {
-						noSubscriber: NoSubscriberBehavior.Pause,
-					},
-				});
-
-				let resource = createAudioResource(createReadStream(join(__dirname, `../../tmp/${videoId}.mp3`)));
-
-			 	player.play(resource);
-
-				console.log(`Now playing ${title}`);
-
-				// Subscribe the connection to the audio player (will play audio on the voice connection)
-				const subscription = connection.subscribe(player);
-
-				await interaction.editReply({ embeds: [nowPlaying] });
-			} else {
-				await interaction.editReply({content: 'Unable to play or find audio.', ephemeral: true});
-			}
 		} else {
-			await interaction.reply({content: 'Unable to play or find audio.', ephemeral: true});
+			await interaction.reply({ content: 'Unable to play or find audio.', ephemeral: true });
+			return;
+		}
+
+	  if(existingConnection) {
+			// We already have an audio playing, add to the queue
+	    await interaction.reply({ content: `Audio is already playing. Your request has been added onto the queue!`, ephemeral: true });
+			interaction.client.channels.cache.get(musicChannelId).send(`<@${interaction.user.id}> added **${searchSong.title}** into the queue.`);
+			global.songQueue.push(searchSong);
+	  } else {
+			// New audio, do new audio logic
+			global.songQueue = [];
+
+			const connection = joinVoiceChannel({
+	      channelId: interaction.member.voice.channel.id,
+	      guildId: interaction.channel.guild.id,
+	      adapterCreator: interaction.channel.guild.voiceAdapterCreator,
+	    });
+
+			const stream = await ytdl(`https://www.youtube.com/watch?v=${searchSong.videoId}`, {filter:'audioonly'}, { quality: 'highestaudio', highWaterMark: 1<<25 });
+			const resource = createAudioResource(stream, { inlineVolume: true });
+			const player = createAudioPlayer({
+	      behaviors: {
+	        noSubscriber: NoSubscriberBehavior.Pause,
+	      },
+	    });
+
+			connection.subscribe(player);
+	    player.play(resource);
+
+			// Setup Player state changes
+			player.on('stateChange', (oldState, newState) => {
+				// Player has stopped playing its audio
+				if(newState.status == 'idle') {
+					if(global.songQueue.length > 0) {
+						var nextSong = global.songQueue.shift();
+
+						var newStream = ytdl(`https://www.youtube.com/watch?v=${nextSong.videoId}`, {filter:'audioonly'}, {quality: '94'});
+						var newResource = createAudioResource(newStream, { inlineVolume: true });
+
+						var newNowPlaying = new MessageEmbed()
+							.setColor(color)
+							.setTitle('Now Playing')
+							.setDescription(`${nextSong.title} (${nextSong.duration})`)
+							.setThumbnail(nextSong.thumbnail)
+							.setTimestamp()
+							.setFooter(`Pulled using the ${name} Bot`);
+
+						// Send new now playing embed
+						interaction.client.channels.cache.get(musicChannelId).send({ embeds: [ newNowPlaying ]});
+
+						// Play next song
+						player.play(newResource);
+					} else {
+						// Nothing left in the queue, destroy the connection
+						connection.destroy();
+					}
+				}
+			});
+
+			// Send now playing embed as reply
+			await interaction.reply({ embeds: [ nowPlaying ] });
 		}
 	},
 };
