@@ -7,17 +7,16 @@ module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('pay')
 		.setDescription('Pay another user with your points')
-    .addStringOption(option =>
-      option.setName('user')
-        .setDescription('User to pay')
-        .setRequired(true))
+		.addUserOption(option =>
+			option.setName('user')
+				.setDescription('User to pay')
+				.setRequired(true))
     .addIntegerOption(option =>
       option.setName('amount')
         .setDescription('Amount to Pay')
         .setRequired(true)),
  	async execute(interaction) {
-
-    const userReceive = interaction.options.getString('user');
+    const userReceive = interaction.options.getUser('user');
     const amount = interaction.options.getInteger('amount');
     const userGive = interaction.user.id;
 
@@ -30,11 +29,11 @@ module.exports = {
     // Check if userReceive exists
     await Points.findOne({ where:
       {
-        username: userReceive
+        user: userReceive.id
       }
     }).then(function(user){
       if(!user) {
-        interaction.reply({ content: `Unable to find user: ${userReceive}.`, ephemeral: true });
+        interaction.reply({ content: `Unable to find user: ${userReceive.username}.`, ephemeral: true });
         return;
       }
     });
@@ -48,14 +47,14 @@ module.exports = {
       if(user && user.points >= amount) {
 
         // Update userReceive points
-        Points.increment('points', { by: amount, where: { username: userReceive }});
+        Points.increment('points', { by: amount, where: { user: userReceive.id }});
 
         // Update userGive points
         Points.increment('points', { by: -amount, where: { user: userGive }});
 
-        interaction.reply({ content: `${amount} points paid to ${userReceive}!`, ephemeral: true });
+        interaction.reply({ content: `${amount} points paid to ${userReceive.username}!`, ephemeral: true });
       } else {
-        interaction.reply({ content: `You do not have enough points to pay ${userReceive}.`, ephemeral: true });
+        interaction.reply({ content: `You do not have enough points to pay ${userReceive.username}.`, ephemeral: true });
       }
 		});
 

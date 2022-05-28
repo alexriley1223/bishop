@@ -25,17 +25,17 @@ module.exports = {
       option.setName('amount')
         .setDescription('Amount to modify')
         .setRequired(true))
-    .addStringOption(option =>
-      option.setName('user')
-        .setDescription('User to modify points of')
-        .setRequired(true)),
+		.addUserOption(option =>
+			option.setName('user')
+				.setDescription('User to pay')
+				.setRequired(true)),
  	execute(interaction) {
     const type = interaction.options.getString('type');
-    const username = interaction.options.getString('user');
+    const modifyUser = interaction.options.getUser('user');
     const amount = interaction.options.getInteger('amount');
 		Points.findOne({ where:
 			{
-				username: username
+				user: modifyUser.id
 			}
 		}).then(function(user){
 			if(user) {
@@ -56,12 +56,12 @@ module.exports = {
         }
 
 				// Add onto the current points the user has
-				Points.update({ points: points },{ where: { username: username }});
+				Points.update({ points: points },{ where: { user: modifyUser.id }});
 
         // Send response
-        interaction.reply({content: `Successfully modified points of ${username}!`, ephemeral: true});
+        interaction.reply({content: `Successfully modified points of ${modifyUser.username}!`, ephemeral: true});
 			} else {
-        interaction.reply({content: `User not found: ${username}`, ephemeral: true});
+        interaction.reply({content: `User not found: ${modifyUser.username}`, ephemeral: true});
       }
 		});
 	},
