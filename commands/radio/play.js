@@ -43,8 +43,7 @@ module.exports = {
 
 	  if(existingConnection) {
 			// We already have an audio playing, add to the queue
-	    await interaction.reply({ content: `Audio is already playing. Your request has been added onto the queue!`, ephemeral: true });
-			interaction.client.channels.cache.get(musicChannelId).send(`<@${interaction.user.id}> added **${searchSong.title}** into the queue.`);
+	    await interaction.reply({ content: `**${searchSong.title}** has been added into the queue!` });
 			global.songQueue.push(searchSong);
 	  } else {
 			// New audio, do new audio logic
