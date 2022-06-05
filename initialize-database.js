@@ -8,6 +8,7 @@ const modules = require('@config/modules.json');
 if(modules.points) {
   require('@models/userPoints.js')(sequelize, Sequelize.DataTypes);
   require('@models/vouchers.js')(sequelize, Sequelize.DataTypes);
+  require('@models/stocks.js')(sequelize, Sequelize.DataTypes);
 }
 
 const force = process.argv.includes('--force') || process.argv.includes('-f');
