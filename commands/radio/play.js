@@ -55,7 +55,16 @@ module.exports = {
 	      adapterCreator: interaction.channel.guild.voiceAdapterCreator,
 	    });
 
-			const stream = await ytdl(`https://www.youtube.com/watch?v=${searchSong.videoId}`, {filter:'audioonly'}, { quality: 'highestaudio', highWaterMark: 1<<25 });
+			const stream = await ytdl(`https://www.youtube.com/watch?v=${searchSong.videoId}`, {
+				filter:'audioonly',
+				quality: 'lowestaudio',
+				fmt: "mp3",
+		    highWaterMark: 1 << 62,
+		    liveBuffer: 1 << 62,
+		    dlChunkSize: 0,
+		    bitrate: 128,
+				}
+			);
 			const resource = createAudioResource(stream, { inlineVolume: true });
 			const player = createAudioPlayer({
 	      behaviors: {
@@ -73,7 +82,15 @@ module.exports = {
 					if(global.songQueue.length > 0) {
 						var nextSong = global.songQueue.shift();
 
-						var newStream = ytdl(`https://www.youtube.com/watch?v=${nextSong.videoId}`, {filter:'audioonly'}, {quality: '94'});
+						var newStream = ytdl(`https://www.youtube.com/watch?v=${nextSong.videoId}`, {
+							filter:'audioonly',
+							quality: 'lowestaudio',
+							fmt: "mp3",
+					    highWaterMark: 1 << 62,
+					    liveBuffer: 1 << 62,
+					    dlChunkSize: 0,
+					    bitrate: 128,
+						});
 						var newResource = createAudioResource(newStream, { inlineVolume: true });
 
 						var newNowPlaying = new MessageEmbed()
