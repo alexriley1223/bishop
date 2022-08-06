@@ -145,100 +145,108 @@ module.exports = {
          * Generate the embed image
          */
 
-        const width = 600;
-        const height = 1000;
+        const width = 1920;
+        const height = 1080;
 
         const canvas = createCanvas(width, height);
         const context = canvas.getContext('2d');
-        context.font = 'bold 45pt Menlo'
-        context.textAlign = 'center'
+        context.font = 'bold 55pt Menlo'
+        context.textAlign = 'left'
         context.fillStyle = '#fff'
 
         // Load base image
         await loadImage(appRoot + '/assets/lol/constants/template.png').then(image => {
-            context.drawImage(image, 0, 0, 600, 1000);
+            context.drawImage(image, 0, 0, width, height);
         });
 
         // Load champion Icon
         await loadImage('https://ddragon.leagueoflegends.com/cdn/12.14.1/img/champion/'+ champion.image.full).then(image => {
-            context.drawImage(image, 225, 20, 150, 150);
+            context.drawImage(image, 55, 34, 160, 160);
         });
-        context.fillText(champion.name, 300, 250);
+        context.fillText(champion.name, 270, 140);
 
         // Load summs
         await loadImage(appRoot + '/assets/lol/constants/spell/' + summonerSpells[0].image['full']).then(image => {
-            context.drawImage(image, 20, 20, 75, 75);
+            context.drawImage(image, 1677, 71, 85, 85);
         });
         await loadImage(appRoot + '/assets/lol/constants/spell/' + summonerSpells[1].image['full']).then(image => {
-            context.drawImage(image, 500, 20, 75, 75);
+            context.drawImage(image, 1790, 71, 85, 85);
         });
 
         // Load Runes (NON DYNAMIC)
 
         // Col 1 (Left Runes)
         await loadImage(appRoot + '/assets/lol/constants/' + runeTree[0].keystones[0].icon).then(image => {
-            context.drawImage(image, 50, 400, 50, 50);
+            context.drawImage(image, 1300, 390, 100, 100);
         });
         await loadImage(appRoot + '/assets/lol/constants/' + runeTree[0].keystones[1].icon).then(image => {
-            context.drawImage(image, 50, 475, 50, 50);
+            context.drawImage(image, 1300, 510, 100, 100);
         });
         await loadImage(appRoot + '/assets/lol/constants/' + runeTree[0].keystones[2].icon).then(image => {
-            context.drawImage(image, 125, 400, 50, 50);
+            context.drawImage(image, 1300, 630, 100, 100);
         });
         await loadImage(appRoot + '/assets/lol/constants/' + runeTree[0].keystones[3].icon).then(image => {
-            context.drawImage(image, 125, 475, 50, 50);
+            context.drawImage(image, 1300, 750, 100, 100);
         });
 
         // Col 2 (Right Runes)
         await loadImage(appRoot + '/assets/lol/constants/' + runeTree[1].keystones[0].icon).then(image => {
-            context.drawImage(image, 300, 400, 50, 50);
+            context.drawImage(image, 1600, 390, 100, 100);
         });
         await loadImage(appRoot + '/assets/lol/constants/' + runeTree[1].keystones[1].icon).then(image => {
-            context.drawImage(image, 300, 475, 50, 50);
+            context.drawImage(image, 1600, 510, 100, 100);
         });
 
         // Col 3 (Stat Mods)
         await loadImage(appRoot + '/assets/lol/constants/mods/' + mods[0].picture +'.png').then(image => {
-            context.drawImage(image, 550, 400, 50, 50);
+            context.drawImage(image, 1300, 900, 100, 100);
         });
         await loadImage(appRoot + '/assets/lol/constants/mods/' + mods[1].picture +'.png').then(image => {
-            context.drawImage(image, 550, 475, 50, 50);
+            context.drawImage(image, 1450, 900, 100, 100);
         });
         await loadImage(appRoot + '/assets/lol/constants/mods/' + mods[2].picture +'.png').then(image => {
-            context.drawImage(image, 550, 550, 50, 50);
+            context.drawImage(image, 1600, 900, 100, 100);
         });
 
         // Load Items (NON DYNAMIC RIGHT NOW)
         await loadImage(appRoot + '/assets/lol/constants/item/' + items[0].image['full']).then(image => {
-            context.drawImage(image, 50, 650, 75, 75);
+            context.drawImage(image, 74, 390, 150, 150);
         });
         await loadImage(appRoot + '/assets/lol/constants/item/' + items[1].image['full']).then(image => {
-            context.drawImage(image, 250, 650, 75, 75);
+            context.drawImage(image, 269, 390, 150, 150);
         });
         await loadImage(appRoot + '/assets/lol/constants/item/' + items[2].image['full']).then(image => {
-            context.drawImage(image, 450, 650, 75, 75);
+            context.drawImage(image, 464, 390, 150, 150);
         });
         await loadImage(appRoot + '/assets/lol/constants/item/' + items[3].image['full']).then(image => {
-            context.drawImage(image, 50, 750, 75, 75);
+            context.drawImage(image, 659, 390, 150, 150);
         });
         await loadImage(appRoot + '/assets/lol/constants/item/' + items[4].image['full']).then(image => {
-            context.drawImage(image, 250, 750, 75, 75);
+            context.drawImage(image, 854, 390, 150, 150);
         });
         await loadImage(appRoot + '/assets/lol/constants/item/' + items[5].image['full']).then(image => {
-            context.drawImage(image, 450, 750, 75, 75);
+            context.drawImage(image, 1049, 390, 150, 150);
         });
 
 
         // Ability Order
-        context.font = 'bold 35pt Menlo'
-        let joinedAbilities = abilities.join(' -> ');
-        context.fillText(joinedAbilities, 300, 950);
+        context.textAlign = 'left'
+        context.font = 'bold 55pt Menlo'
+        let joinedAbilities = abilities.join('      :      ');
+        context.fillText(joinedAbilities, 67, 865);
 
         const buffer = canvas.toBuffer('image/png');
         let randString = (Math.random() + 1).toString(36).substring(7);
         await fs.writeFileSync(appRoot + "/tmp/"+randString+".png", buffer);
 
         await interaction.editReply({ files: [appRoot + "/tmp/" + randString + ".png"]});
+
+        /* Try to delete file */
+        try {
+            fs.unlinkSync(appRoot + "/tmp/"+randString+".png");
+          } catch(err) {
+            console.error(err)
+          }
 
         /**
          * Helper Functions
