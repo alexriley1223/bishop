@@ -1,6 +1,6 @@
 {
   "name": "discord-bot",
-  "version": "2.7.5",
+  "version": "2.7.6",
   "description": "Discord bot using Discord.js for D3X server.",
   "main": "app.js",
   "scripts": {
@@ -37,7 +37,7 @@
     "pretty-ms": "^7.0.1",
     "sequelize": "^6.19.2",
     "sqlite3": "^5.0.8",
-    "ytdl-core": "^4.11.0",
+    "ytdl-core": "^4.10.0",
     "ytsr": "^3.8.0"
   }
 }
