@@ -1,14 +1,11 @@
 {
   "name": "discord-bot",
-  "version": "2.7.8",
+  "version": "2.7.9",
   "description": "Discord bot using Discord.js for D3X server.",
   "main": "app.js",
   "scripts": {
-    "preupgrade": "echo \"Pulling latest changes\" & git pull",
-    "upgrade": "echo \"Upgrading bot dependencies.\" & npm install && echo \"Syncing Database\" & node initialize-database.js && echo \"Registering new commands\" & node deploy-commands.js",
-    "postupgrade": "echo \"Update complete. Please check if anything needs to be updated with config files\""
   },
-  "author": "klingebot",
+  "author": "Alex Riley",
   "license": "ISC",
   "_moduleAliases": {
     "@root": ".",
