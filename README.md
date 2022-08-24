@@ -41,7 +41,7 @@ API Tokens
 
 {
   "lolDevToken": "RGAPI-12345", // LoL API Token if using LoL API
-  "alphaToken": "1M5AHBO6OVB15SRW" // Alpha token if using stock game
+  "alphaToken": "1MXXXXXXXXXXXXXX" // Alpha token if using stock game
 }
 ```
 **bot.json**
