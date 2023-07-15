@@ -2,6 +2,7 @@ const Sequelize = require('sequelize');
 const sequelize = require('@database/database.js')(Sequelize);
 const Points = require('@models/userPoints.js')(sequelize, Sequelize.DataTypes);
 const roles = require('@config/roles.json');
+const modules = require('@config/modules.json');
 
 module.exports = {
 	name: 'voiceStateUpdate',
@@ -9,7 +10,7 @@ module.exports = {
 		const Sequelize = require('sequelize');
 
 		/* Check the user is not a bot */
-		if(!newState.member.user.bot) {
+		if(!newState.member.user.bot && modules.points) {
       // User joins any channel
       if (newState.channelId !== null) {
         const id = newState.id.toString();
