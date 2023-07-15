@@ -5,12 +5,22 @@ const fs = require('fs');
 const path = require('path');
 const { Client, Collection, Intents } = require('discord.js');
 const { token } = require('@config/bot.json');
+const { Player } = require('discord-player');
 const modules = require('@config/modules.json');
 
 const commandPath = './commands';
 
 // Initiate client
-const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_VOICE_STATES] });
+const client = new Client({
+	intents: ['Guilds', 'GuildVoiceStates']
+ });
+
+
+// Register global radio
+if(modules.radio) {
+	const player = new Player(client);
+	player.extractors.loadDefault();
+}
 
 // Initiate events from ./events folder
 var eventFiles = fs.readdirSync('./events').filter(file => file.endsWith('.js'));

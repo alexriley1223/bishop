@@ -1,20 +1,18 @@
-const { MessageEmbed } = require('discord.js');
 const { SlashCommandBuilder } = require('@discordjs/builders');
-const { getVoiceConnection } = require('@discordjs/voice');
-const { musicChannelId } = require('@config/channels.json');
+const { useQueue } = require('discord-player');
 
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('pause')
 		.setDescription('Pause bot if currently playing audio.'),
  	async execute(interaction) {
-	  const connection = getVoiceConnection(interaction.channel.guild.id);
 
-	  if(connection) {
-			connection._state.subscription.player.pause();
-	    await interaction.reply({ content: `Bot has been paused!` });
-	  } else {
-	    await interaction.reply({ content: `Bot is not currently playing any audio!`, ephemeral: true });
-	  }
+		const queue = useQueue(interaction.guild.id);
+		if (queue.node.isPaused()) {
+			return interaction.reply({ content: `Bot is already paused!`, ephemeral: true });
+		}
+		queue.node.pause();
+  
+		return await interaction.reply({ content: `Bot has been paused!` });
 	},
 };

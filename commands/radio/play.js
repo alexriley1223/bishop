@@ -1,8 +1,7 @@
-const { MessageEmbed } = require('discord.js');
+const { EmbedBuilder } = require('discord.js');
 const { SlashCommandBuilder } = require('@discordjs/builders');
-const { joinVoiceChannel, createAudioPlayer, createAudioResource, NoSubscriberBehavior, getVoiceConnection } = require('@discordjs/voice');
-const ytsr = require('ytsr');
-const ytdl = require('ytdl-core');
+const { useQueue, useMainPlayer } = require('discord-player');
+const { SpotifyExtractor, SoundCloudExtractor } = require('@discord-player/extractor');
 const { color, name } = require('@config/bot.json');
 const { musicChannelId } = require('@config/channels.json');
 
@@ -12,109 +11,66 @@ module.exports = {
 		.setDescription('Play a youtube audio track given a title/name.')
     .addStringOption(option => option.setName('name').setDescription('Name of song or video to be played').setRequired(true)),
  	async execute(interaction) {
-		var searchSong = {};
-		var nowPlaying;
+		await interaction.deferReply({ ephemeral: true });
 
-		const existingConnection = getVoiceConnection(interaction.channel.guild.id);
+		const query = interaction.options.getString("name", true);
 
-		const searchFilters = await ytsr.getFilters(interaction.options.getString('name'));
-		const searchFilter = searchFilters.get('Type').get('Video');
-		const searchResults = await ytsr(searchFilter.url, { limit: 1 });
+		const player = useMainPlayer();
+		const queue = useQueue(interaction.guild.id);
+		const userChannel = interaction.member?.voice?.channel;
 
-		// Check if ytsr returned any results
-		// TODO: Add to limit and make user choice
-		if(searchResults.items[0]) {
-			searchSong.title = searchResults.items[0].title;
-			searchSong.videoId = searchResults.items[0].id;
-			searchSong.duration = searchResults.items[0].duration;
-			searchSong.thumbnail = searchResults.items[0].bestThumbnail.url;
+		// Not in a channel
+		if (!userChannel) { return await interaction.editReply('You are not in a voice channel!'); }
 
-			nowPlaying = new MessageEmbed()
-				.setColor(color)
-				.setTitle('Now Playing')
-				.setDescription(`${searchSong.title} (${searchSong.duration})`)
-				.setThumbnail(searchSong.thumbnail)
-				.setTimestamp()
-				.setFooter(`Pulled using the ${name} Bot`);
-		} else {
-			await interaction.reply({ content: 'Unable to play or find audio.', ephemeral: true });
-			return;
-		}
+		if (queue && queue.channel.id !== userChannel.id) { return await interaction.editReply(`I'm already playing in a different voice channel!`); }
 
-	  if(existingConnection) {
-			// We already have an audio playing, add to the queue
-	    await interaction.reply({ content: `**${searchSong.title}** has been added into the queue!` });
-			global.songQueue.push(searchSong);
-	  } else {
-			// New audio, do new audio logic
-			global.songQueue = [];
+		if (!userChannel.viewable) { return await interaction.editReply('I need `View Channel` permissions!'); }
 
-			const connection = joinVoiceChannel({
-	      channelId: interaction.member.voice.channel.id,
-	      guildId: interaction.channel.guild.id,
-	      adapterCreator: interaction.channel.guild.voiceAdapterCreator,
-	    });
+		if (!userChannel.joinable) { return await interaction.editReply('I need `Connect Channel` permissions!'); }
 
-			const stream = await ytdl(`https://www.youtube.com/watch?v=${searchSong.videoId}`, {
-				filter:'audioonly',
-				quality: 'lowestaudio',
-				fmt: "mp3",
-		    highWaterMark: 1 << 62,
-		    liveBuffer: 1 << 62,
-		    dlChunkSize: 0,
-		    bitrate: 128,
-				}
-			);
-			const resource = createAudioResource(stream, { inlineVolume: true });
-			const player = createAudioPlayer({
-	      behaviors: {
-	        noSubscriber: NoSubscriberBehavior.Pause,
-	      },
-	    });
+		if (userChannel.full) { return await interaction.editReply('Voice channel is full!'); }
 
-			connection.subscribe(player);
-	    player.play(resource);
+		if (interaction.member.voice.deaf) { return await interaction.editReply('You cannot run this command while deafened!'); }
 
-			// Setup Player state changes
-			player.on('stateChange', (oldState, newState) => {
-				// Player has stopped playing its audio
-				if(newState.status == 'idle') {
-					if(global.songQueue.length > 0) {
-						var nextSong = global.songQueue.shift();
+		if (interaction.guild.members.me?.voice?.mute) { return await interaction.editReply('Please unmute me before playing!'); }
 
-						var newStream = ytdl(`https://www.youtube.com/watch?v=${nextSong.videoId}`, {
-							filter:'audioonly',
-							quality: 'lowestaudio',
-							fmt: "mp3",
-					    highWaterMark: 1 << 62,
-					    liveBuffer: 1 << 62,
-					    dlChunkSize: 0,
-					    bitrate: 128,
-						});
-						var newResource = createAudioResource(newStream, { inlineVolume: true });
+		const searchResult = await player.search(query, { requestedBy: interaction.user }).catch(() => null);
 
-						var newNowPlaying = new MessageEmbed()
+		if (!searchResult?.hasTracks()) { return await interaction.editReply(`No track was found for ${query}!`); }
+
+		try {
+			await player.play(userChannel, searchResult.tracks[0], {
+			  nodeOptions: {
+				metadata: interaction.channel,
+			  },
+			});
+			
+			var newNowPlaying = new EmbedBuilder();
+
+			if(queue) {
+				newNowPlaying
+							.setColor(color)
+							.setTitle('Added to Queue')
+							.setDescription(`${searchResult.tracks[0].title} (${searchResult.tracks[0].duration})`)
+							.setThumbnail(searchResult.tracks[0].thumbnail)
+							.setTimestamp()
+							.setFooter({ text: `Pulled using the ${name} Bot` });
+			} else {
+				newNowPlaying
 							.setColor(color)
 							.setTitle('Now Playing')
-							.setDescription(`${nextSong.title} (${nextSong.duration})`)
-							.setThumbnail(nextSong.thumbnail)
+							.setDescription(`${searchResult.tracks[0].title} (${searchResult.tracks[0].duration})`)
+							.setThumbnail(searchResult.tracks[0].thumbnail)
 							.setTimestamp()
-							.setFooter(`Pulled using the ${name} Bot`);
+							.setFooter({ text: `Pulled using the ${name} Bot` });
+			}
 
-						// Send new now playing embed
-						interaction.client.channels.cache.get(musicChannelId).send({ embeds: [ newNowPlaying ]});
-
-						// Play next song
-						player.play(newResource);
-					} else {
-						// Nothing left in the queue, destroy the connection
-						connection.destroy();
-					}
-				}
-			});
-
-			// Send now playing embed as reply
-			await interaction.reply({ embeds: [ nowPlaying ] });
+			// Send new now playing embed
+			interaction.client.channels.cache.get(musicChannelId).send({ embeds: [ newNowPlaying ]});
+			return await interaction.editReply(`Now playing ${searchResult.tracks[0].title}`);
+		} catch (e) {
+			console.log(e);
+			return await interaction.editReply(`Something went wrong. Please try again.`);
 		}
 	},
 };

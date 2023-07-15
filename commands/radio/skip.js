@@ -1,19 +1,19 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
-const { getVoiceConnection } = require('@discordjs/voice');
-const { musicChannelId } = require('@config/channels.json');
+const { useQueue } = require('discord-player');
 
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('skip')
 		.setDescription('Skip the currently playing song.'),
  	async execute(interaction) {
-	  const connection = getVoiceConnection(interaction.channel.guild.id);
+		const queue = useQueue(interaction.guild.id);
 
-	  if(connection) {
-      connection._state.subscription.player.stop();
-      await interaction.reply({ content: `The current song has been skipped!` });
-	  } else {
-	    await interaction.reply({ content: `Bot is not currently playing any audio!`, ephemeral: true });
-	  }
+		if (queue.size < 1 && queue.repeatMode !== 3) {
+			return interaction.reply({ content: `The queue has no more tracks.`, ephemeral: true });
+		}
+		
+		queue.node.skip();
+	
+		return interaction.reply({ content: `Current track has been skipped!` });
 	},
 };

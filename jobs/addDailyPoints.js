@@ -15,7 +15,8 @@ module.exports = (Points, client, sequelize) => {
         Points.update({ points: points },{ where: { user: user[0].user }});
 
         // Send @ message in announcements channel
-        client.channels.cache.get(announcementsChannelId).send(`Congrats <@${user[0].user}>! You have won ${randPoints} points for today's free points raffle! 👏🏻`);
+        // Temp disable sending in announcements channel
+        // client.channels.cache.get(announcementsChannelId).send(`Congrats <@${user[0].user}>! You have won ${randPoints} points for today's free points raffle! 👏🏻`);
 
         console.log(`RAFFLE: Adding ${randPoints} points to ${user[0].username}.`);
       });
