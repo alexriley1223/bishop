@@ -18,7 +18,7 @@ module.exports = {
 			const dailyPoints = require('@jobs/addDailyPoints.js')(Points, client, sequelize);
 		}
 
-		const createDatabaseBackup = require('@jobs/createDatabaseBackup.js')();
+		// const createDatabaseBackup = require('@jobs/createDatabaseBackup.js')();
 
 		// Set activity under member list
     client.user.setActivity('These Hands', { type: 'COMPETING' });
