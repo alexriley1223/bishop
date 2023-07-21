@@ -67,7 +67,11 @@ module.exports = {
 
 			// Send new now playing embed
 			interaction.client.channels.cache.get(musicChannelId).send({ embeds: [ newNowPlaying ]});
-			return await interaction.editReply(`Now playing ${searchResult.tracks[0].title}`);
+			if (queue) {
+				return await interaction.editReply(`Added ${searchResult.tracks[0].title} to queue`);
+			} else {
+				return await interaction.editReply(`Now playing ${searchResult.tracks[0].title}`);
+			}
 		} catch (e) {
 			console.log(e);
 			return await interaction.editReply(`Something went wrong. Please try again.`);

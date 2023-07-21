@@ -3,7 +3,7 @@ require('module-alias/register');
 
 const fs = require('fs');
 const path = require('path');
-const { Client, Collection, Intents } = require('discord.js');
+const { Client, Collection, Intents, ActivityType } = require('discord.js');
 const { token } = require('@config/bot.json');
 const { Player } = require('discord-player');
 const modules = require('@config/modules.json');
@@ -20,6 +20,27 @@ const client = new Client({
 if(modules.radio) {
 	const player = new Player(client);
 	player.extractors.loadDefault();
+
+	// Small events here for now
+	player.events.on('playerStart', (queue, track) => {
+		client.user.setPresence({
+			activities: [{ name: `${track.title} by ${track.author}`, type: ActivityType.Listening }]
+		});
+	});
+	player.events.on('emptyQueue', (queue, track) => {
+		setTimeout(() => {
+			client.user.setPresence({
+				activities: [{ name: `These Hands`, type: ActivityType.Competing }]
+			});
+		}, 2000);
+	});
+	player.events.on('disconnect', (queue, track) => {
+		setTimeout(() => {
+			client.user.setPresence({
+				activities: [{ name: `These Hands`, type: ActivityType.Competing }]
+			});
+		}, 2000);
+	});
 }
 
 // Initiate events from ./events folder

@@ -2,6 +2,7 @@ const Sequelize = require('sequelize');
 const sequelize = require('@database/database.js')(Sequelize);
 const Points = require('@models/userPoints.js')(sequelize, Sequelize.DataTypes);
 const modules = require('@config/modules.json');
+const { ActivityType } = require('discord.js');
 
 module.exports = {
 	name: 'ready',
@@ -21,7 +22,9 @@ module.exports = {
 		// const createDatabaseBackup = require('@jobs/createDatabaseBackup.js')();
 
 		// Set activity under member list
-    client.user.setActivity('These Hands', { type: 'COMPETING' });
+		client.user.setPresence({
+			activities: [{ name: `These Hands`, type: ActivityType.Competing }]
+		});
 
 	},
 };
