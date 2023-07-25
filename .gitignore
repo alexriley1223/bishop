@@ -112,6 +112,9 @@ dist
 # TernJS port file
 .tern-port
 
+# isNuxtApp VSCode Directory
+.vscode
+
 # Stores VSCode versions used for testing VSCode extensions
 .vscode-test
 
@@ -128,6 +131,7 @@ config/bot.json
 config/channels.json
 config/roles.json
 config/modules.json
+config/database.json
 
 # Database
 backup/
