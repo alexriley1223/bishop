@@ -1,6 +1,6 @@
 {
   "ranks": [
     { "tier": 1, "id": 12345, "amount": 1 },
-    { "tier": 2, "id": 12345, "amount": 375 },
+    { "tier": 2, "id": 12345, "amount": 375 }
   ]
 }

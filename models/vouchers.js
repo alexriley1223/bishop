@@ -1,10 +1,10 @@
 module.exports = (sequelize, DataTypes) => {
 	return sequelize.define('vouchers', {
-    id: {
-      type: DataTypes.INTEGER,
+		id: {
+			type: DataTypes.INTEGER,
 			autoIncrement: true,
-      primaryKey: true
-    },
+			primaryKey: true,
+		},
 		code: {
 			type: DataTypes.STRING,
 			allowNull: false,
@@ -15,7 +15,7 @@ module.exports = (sequelize, DataTypes) => {
 		},
 		redeemed: {
 			type: DataTypes.BOOLEAN,
-			defaultValue: false
-		}
+			defaultValue: false,
+		},
 	});
 };

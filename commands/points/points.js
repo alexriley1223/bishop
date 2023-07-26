@@ -7,19 +7,22 @@ module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('points')
 		.setDescription('Display the amount of points you have'),
- 	async execute(interaction) {
-    var userId = interaction.user.id;
-    var userPoints = 0;
+	async execute(interaction) {
+		const userId = interaction.user.id;
+		let userPoints = 0;
 
-    // Find user record by id and set user points value
-    await Points.findOne({ where:
-			{
-				user: userId
-			}
-		}).then(function(user){
-      userPoints = user.points;
+		// Find user record by id and set user points value
+		await Points.findOne({
+			where: {
+				user: userId,
+			},
+		}).then(function(user) {
+			userPoints = user.points;
 		});
 
-    await interaction.reply({ content: 'You currently have ' + userPoints + ' points.', ephemeral: true });
+		await interaction.reply({
+			content: 'You currently have ' + userPoints + ' points.',
+			ephemeral: true,
+		});
 	},
 };

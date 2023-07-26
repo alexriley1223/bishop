@@ -9,12 +9,11 @@ module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('viewportfolio')
 		.setDescription('List all current stocks in a users portfolio')
-    .addUserOption(option =>
-			option.setName('user')
-				.setDescription('User to view portfolio of')
-				.setRequired(true)),
- 	async execute(interaction) {
-    const user = interaction.options.getUser('user');
+		.addUserOption((option) =>
+			option.setName('user').setDescription('User to view portfolio of').setRequired(true),
+		),
+	async execute(interaction) {
+		const user = interaction.options.getUser('user');
 
 		/* Generate embed message for portfolio */
 		const stockPortfolio = new MessageEmbed()
@@ -24,12 +23,18 @@ module.exports = {
 			.setFooter(`Pulled using the ${name} Bot`);
 
 		// Pull all tag entries
-		Stocks.findAll({ where: {user: user.id }, order: [['shares', 'DESC']], attributes: ['symbol', 'shares'] }).then((allStocks) => {
-
-			allStocks.forEach((element, index) => { stockPortfolio.addField(`${element.dataValues['symbol']}`, element.dataValues['shares'].toString()) });
+		Stocks.findAll({
+			where: { user: user.id },
+			order: [['shares', 'DESC']],
+			attributes: ['symbol', 'shares'],
+		}).then((allStocks) => {
+			allStocks.forEach((element, index) => {
+				stockPortfolio.addField(
+					`${element.dataValues['symbol']}`,
+					element.dataValues['shares'].toString(),
+				);
+			});
 			interaction.reply({ embeds: [stockPortfolio], ephemeral: true });
-
 		});
-
 	},
 };

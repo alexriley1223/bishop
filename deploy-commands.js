@@ -12,53 +12,59 @@ const commandPath = './commands';
 const commands = [];
 
 /*
-	* Recursively pulls all files from directory
-	* @param {string} dirPath Directory of parent folder
-	* @param {object} arrayOfCommands Return object for list of file paths
+ * Recursively pulls all files from directory
+ * @param {string} dirPath Directory of parent folder
+ * @param {object} arrayOfCommands Return object for list of file paths
  */
 const getAllCommands = function(dirPath, arrayOfCommands) {
-	let commandFiles = fs.readdirSync(dirPath);
+	const commandFiles = fs.readdirSync(dirPath);
 
-	arrayOfCommands = arrayOfCommands || []
+	arrayOfCommands = arrayOfCommands || [];
 
 	commandFiles.forEach(function(file) {
-		if (fs.statSync(dirPath + "/" + file).isDirectory()) {
-			arrayOfCommands = getAllCommands(dirPath + "/" + file, arrayOfCommands);
-		} else {
-			arrayOfCommands.push(path.join(dirPath, "/", file));
+		if (fs.statSync(dirPath + '/' + file).isDirectory()) {
+			arrayOfCommands = getAllCommands(dirPath + '/' + file, arrayOfCommands);
+		}
+		else {
+			arrayOfCommands.push(path.join(dirPath, '/', file));
 		}
 	});
 
 	return arrayOfCommands;
-}
+};
 
 /*
-	* Recursively pulls all directories and checks if enabled in modules config
-	* @param {string} dirPath Directory of parent folder
-	* @param {object} arrayOfCommands Return object for list of file paths
+ * Recursively pulls all directories and checks if enabled in modules config
+ * @param {string} dirPath Directory of parent folder
+ * @param {object} arrayOfCommands Return object for list of file paths
  */
 const getModulatedCommands = function(dirPath, arrayOfCommands) {
-	let commandFiles = fs.readdirSync(dirPath);
+	const commandFiles = fs.readdirSync(dirPath);
 
-	arrayOfCommands = arrayOfCommands || []
+	arrayOfCommands = arrayOfCommands || [];
 
 	Object.keys(modules).forEach(function(key) {
-		if(modules[key]) {
+		if (modules[key]) {
 			console.log('Enabling ' + key);
-			var commandIndex = commandFiles.indexOf(key);
+			const commandIndex = commandFiles.indexOf(key);
 
-			if (fs.statSync(dirPath + "/" + commandFiles[commandIndex]).isDirectory()) {
-				arrayOfCommands = getAllCommands(dirPath + "/" + commandFiles[commandIndex], arrayOfCommands);
-			} else {
-				arrayOfCommands.push(path.join(dirPath, "/", commandFiles[commandIndex]));
+			if (fs.statSync(dirPath + '/' + commandFiles[commandIndex]).isDirectory()) {
+				arrayOfCommands = getAllCommands(
+					dirPath + '/' + commandFiles[commandIndex],
+					arrayOfCommands,
+				);
 			}
-		} else {
+			else {
+				arrayOfCommands.push(path.join(dirPath, '/', commandFiles[commandIndex]));
+			}
+		}
+		else {
 			console.log('Disabling ' + key);
 		}
 	});
 
 	return arrayOfCommands;
-}
+};
 
 // Recursively pull all commands from commandPath folder and subfolders; check if module is enabled
 const commandFiles = getModulatedCommands(commandPath);
@@ -73,15 +79,13 @@ const rest = new REST({ version: '9' }).setToken(token);
 
 (async () => {
 	try {
-    console.log('Started registering application (/) commands.');
+		console.log('Started registering application (/) commands.');
 
-		await rest.put(
-			Routes.applicationGuildCommands(clientId, guildId),
-			{ body: commands },
-		);
+		await rest.put(Routes.applicationGuildCommands(clientId, guildId), { body: commands });
 
 		console.log('Successfully registered application (/) commands.');
-	} catch (error) {
+	}
+	catch (error) {
 		console.error(error);
 	}
 })();

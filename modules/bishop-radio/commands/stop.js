@@ -5,10 +5,10 @@ module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('stop')
 		.setDescription('Stop audio bot if currently playing audio.'),
- 	async execute(interaction) {
+	async execute(interaction) {
 		const queue = useQueue(interaction.guild.id);
 		queue.delete();
-	
-		return await interaction.reply({ content: `Bot playback has been stopped!` });
+
+		return await interaction.reply({ content: 'Bot playback has been stopped!' });
 	},
 };

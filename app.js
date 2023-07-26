@@ -1,126 +1,107 @@
-// Register aliases
+/* Inital Boot Check */
+const boot = require('./helpers/boot');
+boot();
+
 require('module-alias/register');
-
 const fs = require('fs');
-const path = require('path');
-const { Client, Collection, Intents, ActivityType } = require('discord.js');
-const { token } = require('@config/bot.json');
-const { Player } = require('discord-player');
-const modules = require('@config/modules.json');
+const { Client, Collection } = require('discord.js');
+const { clientId, guildId, token } = require('@config/bot.json');
+const { REST } = require('@discordjs/rest');
+const { Routes } = require('discord-api-types/v9');
 
-const commandPath = './commands';
+const log = require('./helpers/logger');
+const utils = require("./helpers/utils");
+
+const commandArr = [];
 
 // Initiate client
 const client = new Client({
-	intents: ['Guilds', 'GuildVoiceStates']
- });
+	intents: ['Guilds', 'GuildVoiceStates'],
+});
 
+/* Load Modules */
+const modules = fs.readdirSync('./modules', { withFileTypes: true });
+modules.forEach(m => {
+  if(m.isDirectory()) {
+    if(fs.existsSync(`./modules/${m.name}/init.js`)) {
+      const module = require(`./modules/${m.name}/init`)(client);
 
-// Register global radio
-if(modules.radio) {
-	const player = new Player(client);
-	player.extractors.loadDefault();
+      if(module.enabled) {
+        /* Run arbitrary init function for module specific dependencies or boot */
+        log.info('Boot', `🔄 Starting to load module ${module.name} (${module.version}).`);
+        try {
+          module.init();
+        } catch (e) {
+          log.error('Boot', `❌ Failed to load module ${module.name}.`)
+        }
+        log.info('Boot', `✅ ${module.name} (${module.version}) initialization complete. Running modulations.`);
 
-	// Small events here for now
-	player.events.on('playerStart', (queue, track) => {
-		client.user.setPresence({
-			activities: [{ name: `${track.title} by ${track.author}`, type: ActivityType.Listening }]
-		});
-	});
-	player.events.on('emptyQueue', (queue, track) => {
-		setTimeout(() => {
-			client.user.setPresence({
-				activities: [{ name: `These Hands`, type: ActivityType.Competing }]
-			});
-		}, 2000);
-	});
-	player.events.on('disconnect', (queue, track) => {
-		setTimeout(() => {
-			client.user.setPresence({
-				activities: [{ name: `These Hands`, type: ActivityType.Competing }]
-			});
-		}, 2000);
-	});
-}
+        /* Register module commands */
+        if(fs.existsSync(`./modules/${m.name}/commands`)) {
+          const commands = utils.getAllFiles(`./modules/${m.name}/commands`); 
+          if(commands.length > 0) {
+            log.info('Boot', `🔄 Starting to load ${module.name} commands. ${commands.length} discovered.`);
+            client.commands = new Collection();
 
-// Initiate events from ./events folder
-var eventFiles = fs.readdirSync('./events').filter(file => file.endsWith('.js'));
+            for (const file of commands) {
+              const command = require(`./${file}`);
+              if ('data' in command && 'execute' in command) {
+                client.commands.set(command.data.name, command);
+                commandArr.push(command.data.toJSON());
+              } else {
+                log.warn('Boot', `The command at ${file} is missing a required "data" or "execute" property.`);
+              }
+            }
 
-// Add points events if points module is enabled (REFACTOR WHEN MORE EVENTS EXIST)
-if(modules.points) {
-	console.log('Registering Points Events');
-	pointsEvents = fs.readdirSync('./events/points').filter(file => file.endsWith('.js'));
-	for(var i = 0; i < pointsEvents.length; i++) {
-		pointsEvents[i] = '/points/' + pointsEvents[i];
-	}
-	eventFiles = eventFiles.concat(pointsEvents);
-}
+            log.info('Boot', `✅ ${module.name} commands loaded.`);
+          }
+        }
 
-// Initiate commands from ./commands folder
-client.commands = new Collection();
+        /* Register module events */
+        if(fs.existsSync(`./modules/${m.name}/events`)) {
+          const events = utils.getAllFiles(`./modules/${m.name}/events`);
+          if(events.length > 0) {
+            log.info('Boot', `🔄 Starting to load ${module.name} events. ${events.length} discovered.`);
 
-/*
-	* Recursively pulls all files from directory
-	* @param {string} dirPath Directory of parent folder
-	* @param {object} arrayOfCommands Return object for list of file paths
- */
-const getAllCommands = function(dirPath, arrayOfCommands) {
-	let commandFiles = fs.readdirSync(dirPath);
+            for (const file of events) {
+              const event = require(`./${file}`);
+            
+              if (event.once) {
+                client.once(event.name, (...args) => event.execute(...args));
+              }
+              else {
+                client.on(event.name, (...args) => event.execute(...args));
+              }
+            }
 
-	arrayOfCommands = arrayOfCommands || []
+            log.info('Boot', `✅ ${module.name} events loaded.`);
+          }
+        }
+        
+        /* Run any DB if needed */
 
-	commandFiles.forEach(function(file) {
-		if (fs.statSync(dirPath + "/" + file).isDirectory()) {
-			arrayOfCommands = getAllCommands(dirPath + "/" + file, arrayOfCommands);
-		} else {
-			arrayOfCommands.push(path.join(dirPath, "/", file));
-		}
-	});
+        /* Register any Jobs */
+        if(fs.existsSync(`./modules/${m.name}/jobs`)) {
+          const jobs = utils.getAllFiles(`./modules/${m.name}/jobs`);
+          if(jobs.length > 0) {
+            log.info('Boot', `🔄 Starting to load ${module.name} jobs. ${jobs.length} discovered.`);
 
-	return arrayOfCommands;
-}
+            for (const file of jobs) {
+              const job = require(`./${file}`);
+            }
 
-/*
-	* Recursively pulls all directories and checks if enabled in modules config
-	* @param {string} dirPath Directory of parent folder
-	* @param {object} arrayOfCommands Return object for list of file paths
- */
-const getModulatedCommands = function(dirPath, arrayOfCommands) {
-	let commandFiles = fs.readdirSync(dirPath);
+            log.info('Boot', `✅ ${module.name} jobs loaded.`);
+          }
+        }
+      }
+      
+    }
+  }
+});
 
-	arrayOfCommands = arrayOfCommands || []
-
-	Object.keys(modules).forEach(function(key) {
-		if(modules[key]) {
-			console.log('Enabling ' + key);
-			var commandIndex = commandFiles.indexOf(key);
-
-			if (fs.statSync(dirPath + "/" + commandFiles[commandIndex]).isDirectory()) {
-				arrayOfCommands = getAllCommands(dirPath + "/" + commandFiles[commandIndex], arrayOfCommands);
-			} else {
-				arrayOfCommands.push(path.join(dirPath, "/", commandFiles[commandIndex]));
-			}
-		} else {
-			console.log('Disabling ' + key);
-		}
-	});
-
-	return arrayOfCommands;
-}
-
-// Recursively pull all commands from commandPath folder and subfolders
-const commandFiles = getModulatedCommands(commandPath);
-
-/* Cycle enabled commands and add each command to collection */
-for (const file of commandFiles) {
-	const command = require(`./${file}`);
-	// Set a new item in the Collection
-	// With the key as the command name and the value as the exported module
-	client.commands.set(command.data.name, command);
-}
-
-/* Cycle enabled events and execute on event call */
-for (const file of eventFiles) {
+/* Load Bishop Events */
+const bishopEvents = fs.readdirSync('./events').filter(file => file.endsWith('.js'));
+for (const file of bishopEvents) {
 	const event = require(`./events/${file}`);
 
 	if (event.once) {
@@ -130,5 +111,28 @@ for (const file of eventFiles) {
 	}
 }
 
-// Login bot
-client.login(token);
+// Deploy Commands
+const rest = new REST().setToken(token);
+(async () => {
+  try {
+    console.log(`Started refreshing ${commandArr.length} application (/) commands.`);
+
+    // The put method is used to fully refresh all commands in the guild with the current set
+    const data = await rest.put(
+      Routes.applicationGuildCommands(clientId, guildId),
+      { body: commandArr },
+    );
+
+    console.log(`Successfully reloaded ${data.length} application (/) commands.`);
+  } catch (error) {
+    // And of course, make sure you catch and log any errors!
+    console.error(error);
+  }
+})();
+
+/* Login Bot */
+try {
+  client.login(token);
+} catch (e) {
+  throw Error(`❌ Failed to login Bot. Please try again.`);
+}

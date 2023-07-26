@@ -7,28 +7,32 @@ module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('viewpoints')
 		.setDescription('View any user\'s points, by username')
-		.addUserOption(option =>
-			option.setName('user')
-				.setDescription('User to view points of')
-				.setRequired(true)),
- 	async execute(interaction) {
+		.addUserOption((option) =>
+			option.setName('user').setDescription('User to view points of').setRequired(true),
+		),
+	async execute(interaction) {
+		const viewUser = interaction.options.getUser('user');
+		let userPoints = 0;
 
-    const viewUser = interaction.options.getUser('user');
-    var userPoints = 0;
-
-    // Find user record by id and set user points value
-    await Points.findOne({ where:
-			{
-				user: viewUser.id
+		// Find user record by id and set user points value
+		await Points.findOne({
+			where: {
+				user: viewUser.id,
+			},
+		}).then(function(user) {
+			if (user) {
+				userPoints = user.points;
+				interaction.reply({
+					content: `${viewUser.username} currently has ${userPoints} points!`,
+					ephemeral: true,
+				});
 			}
-		}).then(function(user){
-      if(user) {
-        userPoints = user.points;
-        interaction.reply({ content: `${viewUser.username} currently has ${userPoints} points!`, ephemeral: true });
-      } else {
-        interaction.reply({ content: `Unable to find user: ${viewUser.username}.`, ephemeral: true });
-      }
+			else {
+				interaction.reply({
+					content: `Unable to find user: ${viewUser.username}.`,
+					ephemeral: true,
+				});
+			}
 		});
-
 	},
 };

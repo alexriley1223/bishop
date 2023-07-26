@@ -11,7 +11,7 @@ module.exports = {
 		console.log(`Ready! Logged in as ${client.user.tag}`);
 
 		// Check if points module is enabled (REFACTOR WHEN MORE JOBS ARE IN)
-		if(modules.points) {
+		if (modules.points) {
 			console.log('Points Jobs Enabled');
 			// Sync userpoints database
 			Points.sync();
@@ -23,8 +23,7 @@ module.exports = {
 
 		// Set activity under member list
 		client.user.setPresence({
-			activities: [{ name: `These Hands`, type: ActivityType.Competing }]
+			activities: [{ name: 'These Hands', type: ActivityType.Competing }],
 		});
-
 	},
 };

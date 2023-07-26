@@ -4,6 +4,8 @@
   "description": "Discord bot using Discord.js for D3X server.",
   "main": "app.js",
   "scripts": {
+    "register": "node deploy-commands.js",
+    "unregister": "node unregister-commands.js",
     "lint": "npx eslint .",
     "lint:fix": "npx eslint . --fix",
     "prettier": "npx prettier . --check",
@@ -41,6 +43,7 @@
     "module-alias": "^2.2.2",
     "path": "^0.12.7",
     "pretty-ms": "^7.0.1",
+    "semver": "^7.5.4",
     "sequelize": "^6.19.2",
     "sqlite3": "^5.0.8",
     "ytdl-core": "^4.11.5",

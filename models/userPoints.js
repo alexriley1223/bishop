@@ -1,10 +1,10 @@
 module.exports = (sequelize, DataTypes) => {
 	return sequelize.define('points', {
-    user: {
-      type: DataTypes.STRING,
+		user: {
+			type: DataTypes.STRING,
 			allowNull: false,
-      unique: true,
-    },
+			unique: true,
+		},
 		username: {
 			type: DataTypes.STRING,
 			allowNull: false,
@@ -12,10 +12,10 @@ module.exports = (sequelize, DataTypes) => {
 		lastJoin: {
 			type: DataTypes.INTEGER,
 		},
-    points: {
-      type: DataTypes.INTEGER,
-      defaultValue: 0,
-      allowNull: false,
-    },
+		points: {
+			type: DataTypes.INTEGER,
+			defaultValue: 0,
+			allowNull: false,
+		},
 	});
 };
