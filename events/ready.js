@@ -10,7 +10,7 @@ module.exports = {
 	execute(client) {
 		console.log(`Ready! Logged in as ${client.user.tag}`);
 
-		// Check if points module is enabled (REFACTOR WHEN MORE JOBS ARE IN)
+		/*
 		if (modules.points) {
 			console.log('Points Jobs Enabled');
 			// Sync userpoints database
@@ -18,6 +18,7 @@ module.exports = {
 
 			const dailyPoints = require('@jobs/addDailyPoints.js')(Points, client, sequelize);
 		}
+		*/
 
 		// const createDatabaseBackup = require('@jobs/createDatabaseBackup.js')();
 

@@ -3,6 +3,7 @@ const { EmbedBuilder } = require('discord.js');
 const { useQueue } = require('discord-player');
 const { color } = require('@config/bot.json');
 
+/*
 const avlFilters = [
 	'Bassboost',
 	'Chorus',
@@ -30,6 +31,7 @@ const avlFilters = [
 	'Vaporwave',
 	'Vibrato',
 ];
+*/
 
 module.exports = {
 	data: new SlashCommandBuilder()

@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 
 function getAllFiles(dirPath, arrayOfFiles) {
-    const files = fs.readdirSync(dirPath);
+	const files = fs.readdirSync(dirPath);
 
 	arrayOfFiles = arrayOfFiles || [];
 
@@ -19,5 +19,5 @@ function getAllFiles(dirPath, arrayOfFiles) {
 }
 
 module.exports = {
-    getAllFiles
+	getAllFiles,
 };

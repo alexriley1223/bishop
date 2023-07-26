@@ -1,4 +1,3 @@
-const { Permissions } = require('discord.js');
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const gitVersion = require('git-tag-version');
 

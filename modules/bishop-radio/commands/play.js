@@ -1,7 +1,6 @@
 const { EmbedBuilder } = require('discord.js');
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { useQueue, useMainPlayer } = require('discord-player');
-const { SpotifyExtractor, SoundCloudExtractor } = require('@discord-player/extractor');
 const { color, name } = require('@config/bot.json');
 const { musicChannelId } = require('@config/channels.json');
 

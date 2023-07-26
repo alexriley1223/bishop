@@ -7,14 +7,11 @@ const modules = require('@config/modules.json');
 module.exports = {
 	name: 'voiceStateUpdate',
 	async execute(oldState, newState) {
-		const Sequelize = require('sequelize');
-
 		/* Check the user is not a bot */
 		if (!newState.member.user.bot && modules.points) {
 			// User joins any channel
 			if (newState.channelId !== null) {
 				const id = newState.id.toString();
-				const username = newState.member.user.username;
 				let userModel;
 
 				await Points.findOne({
