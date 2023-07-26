@@ -1,7 +1,7 @@
 {
-  "name": "discord-bot",
+  "name": "bishop",
   "version": "3.0.2",
-  "description": "Discord bot using Discord.js for D3X server.",
+  "description": "Self-hosted Discord bot written in Node.js using Discord.js",
   "main": "app.js",
   "scripts": {
     "register": "node deploy-commands.js",
@@ -11,11 +11,11 @@
     "prettier": "npx prettier . --check",
     "prettier:fix": "npx prettier . --write",
     "format": "npm run prettier:fix && npm run lint:fix",
-    "start:prod": "node app.js",
+    "start:prod": "node unregister-commands.js && node app.js",
     "start:dev": "nodemon app.js"
   },
   "author": "Alex Riley",
-  "license": "ISC",
+  "license": "GNU GENERAL PUBLIC LICENSE",
   "_moduleAliases": {
     "@root": ".",
     "@config": "./config",
