@@ -7,7 +7,7 @@
 		<img src="https://img.shields.io/discord/604872185391087629?style=for-the-badge" alt="DEX Discord Server" />
 </div>
 
-## About
+## Bishop
 Bishop is an all-in-one, self hosted Discord bot for developers and tinkerers. Built using <a href="https://discord.js.org/">discord.js</a>, Bishop is easily expandable to suite your server's needs.
 ## Features
 - Dynamic and expandable command, event, database, and job system
