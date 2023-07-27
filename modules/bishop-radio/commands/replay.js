@@ -2,6 +2,7 @@ const { SlashCommandBuilder } = require('@discordjs/builders');
 const { useQueue } = require('discord-player');
 
 module.exports = {
+	enabled: true,
 	data: new SlashCommandBuilder().setName('replay').setDescription('Replay the current track.'),
 	async execute(interaction) {
 		const queue = useQueue(interaction.guild.id);

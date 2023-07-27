@@ -1,6 +1,6 @@
 {
   "name": "bishop",
-  "version": "3.0.2",
+  "version": "4.0.0",
   "description": "Self-hosted Discord bot written in Node.js using Discord.js",
   "main": "app.js",
   "scripts": {
@@ -11,17 +11,17 @@
     "prettier": "npx prettier . --check",
     "prettier:fix": "npx prettier . --write",
     "format": "npm run prettier:fix && npm run lint:fix",
-    "start:prod": "node unregister-commands.js && node app.js",
-    "start:dev": "nodemon app.js"
+    "start:dev": "nodemon app.js",
+    "start:prod": "node unregister-commands.js && node app.js"
   },
   "author": "Alex Riley",
   "license": "GNU GENERAL PUBLIC LICENSE",
   "_moduleAliases": {
     "@root": ".",
+    "@backup": "./backup",
     "@config": "./config",
-    "@assets": "./assets",
     "@models": "./models",
-    "@jobs": "./jobs",
+    "@helpers": "./helpers",
     "@database": "./database"
   },
   "dependencies": {

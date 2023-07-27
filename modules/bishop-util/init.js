@@ -6,6 +6,8 @@ module.exports = function() {
 	module.version = '1.0.0';
 	module.enabled = true;
 
-	module.init = function init() {};
+	module.init = function init() {
+		/* ~empty~ */
+	};
 	return module;
 };

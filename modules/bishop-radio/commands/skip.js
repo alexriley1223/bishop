@@ -2,6 +2,7 @@ const { SlashCommandBuilder } = require('@discordjs/builders');
 const { useQueue } = require('discord-player');
 
 module.exports = {
+	enabled: true,
 	data: new SlashCommandBuilder()
 		.setName('skip')
 		.setDescription('Skip the currently playing song.'),

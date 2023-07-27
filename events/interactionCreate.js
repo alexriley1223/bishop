@@ -1,19 +1,19 @@
 const { InteractionType } = require('discord.js');
+const log = require('@helpers/logger');
+const utils = require('@helpers/utils');
 
 module.exports = {
 	name: 'interactionCreate',
 	execute(interaction) {
-		console.log(
-			`${interaction.user.tag} in #${interaction.channel.name} triggered an interaction.`,
+		log.info(
+			'Interaction',
+			`${interaction.user.username} in #${interaction.channel.name} triggered an interaction (/${interaction.commandName}).`,
 		);
 
 		if (!interaction.type === InteractionType.ApplicationCommand) return;
 
 		const command = interaction.client.commands.get(interaction.commandName);
 
-		if (!command) return;
-
-		// Valid Command - try to execute
 		try {
 			command.execute(interaction);
 		}
@@ -24,5 +24,7 @@ module.exports = {
 				ephemeral: true,
 			});
 		}
+
+		utils.fireModuleEvents(interaction.client, this.name);
 	},
 };

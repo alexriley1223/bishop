@@ -2,6 +2,7 @@ const { SlashCommandBuilder } = require('@discordjs/builders');
 const { useQueue } = require('discord-player');
 
 module.exports = {
+	enabled: true,
 	data: new SlashCommandBuilder()
 		.setName('movetrack')
 		.setDescription('Move a track in the queue')

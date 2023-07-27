@@ -1,23 +1,35 @@
+require('module-alias/register');
+
 /* Inital Boot Check */
-const boot = require('./helpers/boot');
+const boot = require('@helpers/boot');
 boot();
 
-require('module-alias/register');
 const fs = require('fs');
-const { Client, Collection } = require('discord.js');
+const { Client, Collection, GatewayIntentBits } = require('discord.js');
 const { clientId, guildId, token } = require('@config/bot.json');
 const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v9');
 
-const log = require('./helpers/logger');
-const utils = require('./helpers/utils');
+const log = require('@helpers/logger');
+const utils = require('@helpers/utils');
 
 const commandArr = [];
 
-// Initiate client
+/* Initiate client */
+/* TODO: ALlow modules to require Gateway Intents checks */
 const client = new Client({
-	intents: ['Guilds', 'GuildVoiceStates'],
+	intents: [
+		GatewayIntentBits.Guilds,
+		GatewayIntentBits.GuildMessageReactions,
+		GatewayIntentBits.GuildMessageTyping,
+		GatewayIntentBits.GuildMessages,
+		GatewayIntentBits.GuildMembers,
+		GatewayIntentBits.GuildVoiceStates,
+	],
 });
+
+client.commands = new Collection();
+client.bishop = {};
 
 /* Load Modules */
 const modules = fs.readdirSync('./modules', { withFileTypes: true });
@@ -48,19 +60,21 @@ modules.forEach((m) => {
 							'Boot',
 							`🔄 Starting to load ${module.name} commands. ${commands.length} discovered.`,
 						);
-						client.commands = new Collection();
 
 						for (const file of commands) {
 							const command = require(`./${file}`);
-							if ('data' in command && 'execute' in command) {
-								client.commands.set(command.data.name, command);
-								commandArr.push(command.data.toJSON());
-							}
-							else {
-								log.warn(
-									'Boot',
-									`The command at ${file} is missing a required "data" or "execute" property.`,
-								);
+
+							if ('enabled' in command && command.enabled) {
+								if ('data' in command && 'execute' in command) {
+									client.commands.set(command.data.name, command);
+									commandArr.push(command.data.toJSON());
+								}
+								else {
+									log.warn(
+										'Boot',
+										`The command at ${file} is missing a required "data" or "execute" property.`,
+									);
+								}
 							}
 						}
 
@@ -68,7 +82,7 @@ modules.forEach((m) => {
 					}
 				}
 
-				/* Register module events */
+				/* Register module events to client events object */
 				if (fs.existsSync(`./modules/${m.name}/events`)) {
 					const events = utils.getAllFiles(`./modules/${m.name}/events`);
 					if (events.length > 0) {
@@ -78,14 +92,25 @@ modules.forEach((m) => {
 						);
 
 						for (const file of events) {
-							const event = require(`./${file}`);
+							const singleName = file.split('/').slice(-1).join();
+							if (!fs.existsSync(`./events/${singleName}`)) {
+								log.error(
+									'Boot',
+									`❌ Failed to load event ${singleName} for ${module.name}. Please ensure the template event exists in ~/events.`,
+								);
+							}
 
-							if (event.once) {
-								client.once(event.name, (...args) => event.execute(...args));
+							const singleNameNoExt = singleName.replace('.js', '');
+
+							if (!client.bishop.events) {
+								client.bishop.events = {};
 							}
-							else {
-								client.on(event.name, (...args) => event.execute(...args));
+
+							if (!client.bishop.events[singleNameNoExt]) {
+								client.bishop.events[singleNameNoExt] = [];
 							}
+
+							client.bishop.events[singleNameNoExt].push(file);
 						}
 
 						log.info('Boot', `✅ ${module.name} events loaded.`);
@@ -101,7 +126,10 @@ modules.forEach((m) => {
 						log.info('Boot', `🔄 Starting to load ${module.name} jobs. ${jobs.length} discovered.`);
 
 						for (const file of jobs) {
-							require(`./${file}`);
+							const job = require(`./${file}`);
+							if (job.enabled) {
+								job.executeJob();
+							}
 						}
 
 						log.info('Boot', `✅ ${module.name} jobs loaded.`);
@@ -113,6 +141,7 @@ modules.forEach((m) => {
 });
 
 /* Load Bishop Events */
+/* TODO: move this to a module like bishop-core or something? */
 const bishopEvents = fs.readdirSync('./events').filter((file) => file.endsWith('.js'));
 for (const file of bishopEvents) {
 	const event = require(`./events/${file}`);
@@ -125,22 +154,20 @@ for (const file of bishopEvents) {
 	}
 }
 
-// Deploy Commands
+/* Deploy Commands */
 const rest = new REST().setToken(token);
 (async () => {
 	try {
-		console.log(`Started refreshing ${commandArr.length} application (/) commands.`);
+		log.info('BOOT', `Started refreshing ${commandArr.length} application (/) commands.`);
 
-		// The put method is used to fully refresh all commands in the guild with the current set
 		const data = await rest.put(Routes.applicationGuildCommands(clientId, guildId), {
 			body: commandArr,
 		});
 
-		console.log(`Successfully reloaded ${data.length} application (/) commands.`);
+		log.info('BOOT', `Successfully reloaded ${data.length} application (/) commands.`);
 	}
 	catch (error) {
-		// And of course, make sure you catch and log any errors!
-		console.error(error);
+		throw Error('❌ Failed to register application commands. Please try again.');
 	}
 })();
 

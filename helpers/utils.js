@@ -18,6 +18,17 @@ function getAllFiles(dirPath, arrayOfFiles) {
 	return arrayOfFiles;
 }
 
+/* Inject Module Events */
+function fireModuleEvents(client, eventName) {
+	if (client.bishop?.events[eventName]) {
+		client.bishop.events[eventName].forEach((event) => {
+			require(`../${event}`)(client);
+		});
+	}
+	return true;
+}
+
 module.exports = {
 	getAllFiles,
+	fireModuleEvents,
 };

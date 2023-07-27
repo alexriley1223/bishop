@@ -4,6 +4,7 @@ const { SlashCommandBuilder } = require('@discordjs/builders');
 const { useQueue } = require('discord-player');
 
 module.exports = {
+	enabled: true,
 	data: new SlashCommandBuilder()
 		.setName('queue')
 		.setDescription('See the current queue.')

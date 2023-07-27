@@ -77,8 +77,4 @@ module.exports = async function() {
 			throw Error(`❌ Missing required config file ${e}. Please ensure this file exists.`);
 		}
 	});
-
-	// Config - Add area for dev ID
-
-	return true;
 };

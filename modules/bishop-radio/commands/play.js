@@ -5,6 +5,7 @@ const { color, name } = require('@config/bot.json');
 const { musicChannelId } = require('@config/channels.json');
 
 module.exports = {
+	enabled: true,
 	data: new SlashCommandBuilder()
 		.setName('play')
 		.setDescription('Play a youtube audio track given a title/name.')

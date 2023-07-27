@@ -34,6 +34,7 @@ const avlFilters = [
 */
 
 module.exports = {
+	enabled: true,
 	data: new SlashCommandBuilder()
 		.setName('filter')
 		.setDescription('Play an audio filter over the current playback.')

@@ -14,33 +14,37 @@ module.exports = function(client) {
 		player.extractors.loadDefault();
 
 		player.events.on('playerStart', (queue, track) => {
-			client.user.setPresence({
-				activities: [{ name: `${track.title} by ${track.author}`, type: ActivityType.Listening }],
-			});
+			setPresence(track);
 		});
 		player.events.on('emptyQueue', () => {
 			setTimeout(() => {
-				client.user.setPresence({
-					activities: [{ name: 'These Hands', type: ActivityType.Competing }],
-				});
+				resetPresence();
 			}, 2000);
 		});
 		player.events.on('disconnect', () => {
 			setTimeout(() => {
-				client.user.setPresence({
-					activities: [{ name: 'These Hands', type: ActivityType.Competing }],
-				});
+				resetPresence();
 			}, 2000);
 		});
 
 		player.events.on('connectionDestroyed', () => {
 			setTimeout(() => {
-				client.user.setPresence({
-					activities: [{ name: 'These Hands', type: ActivityType.Competing }],
-				});
+				resetPresence();
 			}, 2000);
 		});
 	};
+
+	function resetPresence() {
+		client.user.setPresence({
+			activities: [{ name: 'These Hands', type: ActivityType.Competing }],
+		});
+	}
+
+	function setPresence(track) {
+		client.user.setPresence({
+			activities: [{ name: `${track.title} by ${track.author}`, type: ActivityType.Listening }],
+		});
+	}
 
 	return module;
 };

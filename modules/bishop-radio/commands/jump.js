@@ -2,6 +2,7 @@ const { SlashCommandBuilder } = require('@discordjs/builders');
 const { useQueue } = require('discord-player');
 
 module.exports = {
+	enabled: true,
 	data: new SlashCommandBuilder()
 		.setName('jump')
 		.setDescription('Jump to a track without removing others in the way')
@@ -15,7 +16,7 @@ module.exports = {
 			return interaction.reply({ content: 'The queue has no more tracks.', ephemeral: true });
 		}
 
-		const index = interaction.options.getInteger('index', true) - 1; // Remove one since we're adding +1 in queue
+		const index = interaction.options.getInteger('index', true) - 1;
 
 		if (index > queue?.size || index < 0) {
 			return interaction.reply({ content: 'Not a valid queue index.', ephemeral: true });
