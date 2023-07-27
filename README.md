@@ -1,7 +1,7 @@
 <div align="center">
 	<br />
 	<p>
-		<img src="https://git.alexriley.me/repo-avatars/12-5bf0c8fdfc11c47e193cd60a18a1a7b7" width="250" alt="Bishop Discord Bot" />
+		<img src="https://raw.githubusercontent.com/alexriley1223/bishop/rework/static/bishopbanner.png" alt="Bishop Discord Bot" />
 	</p>
 	<p>
 		<img src="https://img.shields.io/discord/604872185391087629?style=for-the-badge" alt="DEX Discord Server" />
