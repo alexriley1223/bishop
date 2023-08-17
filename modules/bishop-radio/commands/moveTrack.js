@@ -45,7 +45,7 @@ module.exports = {
 		queue.node.move(from, to);
 
 		return interaction.reply({
-			content: `Track ${from + 1} move to position ${to + 1} in the queue.`,
+			content: `Track ${from + 1} moved to position ${to + 1} in the queue.`,
 		});
 	},
 };

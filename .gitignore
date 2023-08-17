@@ -126,12 +126,11 @@ dist
 .pnp.*
 
 # Config
-config/api.json
 config/bot.json
-config/channels.json
-config/roles.json
-config/modules.json
 config/database.json
+
+modules/**/*.json
+!modules/**/*_template.json
 
 # Database
 backup/

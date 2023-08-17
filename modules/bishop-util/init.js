@@ -3,7 +3,7 @@ module.exports = function() {
 
 	module.name = 'Bishop Utils';
 	module.description = 'Utility commands for Bishop.';
-	module.version = '1.0.0';
+	module.version = '1.0.1';
 	module.enabled = true;
 
 	module.init = function init() {

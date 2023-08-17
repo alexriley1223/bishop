@@ -20,32 +20,24 @@ module.exports = async function() {
 		);
 	}
 	else {
-		log.info('SUCCESS', `✅ Node version is correct (${process.versions.node}).`);
+		log.info('BOOT', `✅ Node version is correct (${process.versions.node}).`);
 	}
 
 	/* Check all root configs exist and required fields exist */
 	/* TODO: Condense into one bishop config file */
 	const configs = [
-		'api.json',
 		'bot.json',
-		'channels.json',
 		'database.json',
-		'modules.json',
-		'roles.json',
 	];
 
 	const requiredFields = {
-		'api.json': [],
 		'bot.json': ['clientId', 'guildId', 'token', 'color', 'name'],
-		'channels.json': [],
 		'database.json': [],
-		'modules.json': [],
-		'roles.json': [],
 	};
 
 	configs.forEach((e) => {
 		if (fs.existsSync(`./config/${e}`)) {
-			log.info('SUCCESS', `✅ ${e} exists.`);
+			log.info('BOOT', `✅ ${e} exists.`);
 
 			/* Check if required fields exist */
 			const moduleJson = JSON.parse(fs.readFileSync(`./config/${e}`, 'utf8'));
@@ -70,7 +62,7 @@ module.exports = async function() {
 				);
 			}
 			else {
-				log.info('SUCCESS', `✅ ${e} is populated and has all values.`);
+				log.info('BOOT', `✅ ${e} is populated and has all values.`);
 			}
 		}
 		else {

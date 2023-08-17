@@ -1,12 +1,14 @@
 const { Player } = require('discord-player');
-const { ActivityType } = require('discord.js');
+const { ActivityType, EmbedBuilder } = require('discord.js');
+const { musicChannelId } = require('./config.json');
+const { color } = require('@config/bot.json');
 
 module.exports = function(client) {
 	const module = {};
 
 	module.name = 'Bishop Radio';
 	module.description = 'A full-fledged web radio player for the Bishop Discord bot.';
-	module.version = '1.0.0';
+	module.version = '1.0.1';
 	module.enabled = true;
 
 	module.init = function init() {
@@ -15,6 +17,16 @@ module.exports = function(client) {
 
 		player.events.on('playerStart', (queue, track) => {
 			setPresence(track);
+
+			const newNowPlaying = new EmbedBuilder()
+					.setColor(color)
+					.setTitle('Now Playing')
+					.setDescription(`${track.title} (${track.duration})`)
+					.setThumbnail(track.thumbnail)
+					.setTimestamp()
+					.setFooter({ text: `Requested by: ${track.requestedBy.tag}`, iconURL: `${track.requestedBy.displayAvatarURL({ dynamic: true })}` });
+
+			client.channels.cache.get(musicChannelId).send({ embeds: [newNowPlaying] });
 		});
 		player.events.on('emptyQueue', () => {
 			setTimeout(() => {

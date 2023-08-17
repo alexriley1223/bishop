@@ -1,8 +1,8 @@
 const { EmbedBuilder } = require('discord.js');
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { useQueue, useMainPlayer } = require('discord-player');
-const { color, name } = require('@config/bot.json');
-const { musicChannelId } = require('@config/channels.json');
+const { color } = require('@config/bot.json');
+const { musicChannelId } = require('../config.json');
 
 module.exports = {
 	enabled: true,
@@ -74,24 +74,11 @@ module.exports = {
 					.setDescription(`${searchResult.tracks[0].title} (${searchResult.tracks[0].duration})`)
 					.setThumbnail(searchResult.tracks[0].thumbnail)
 					.setTimestamp()
-					.setFooter({ text: `Pulled using the ${name} Bot` });
-			}
-			else {
-				newNowPlaying
-					.setColor(color)
-					.setTitle('Now Playing')
-					.setDescription(`${searchResult.tracks[0].title} (${searchResult.tracks[0].duration})`)
-					.setThumbnail(searchResult.tracks[0].thumbnail)
-					.setTimestamp()
-					.setFooter({ text: `Pulled using the ${name} Bot` });
-			}
+					.setFooter({ text: `Requested by: ${searchResult.tracks[0].requestedBy.tag}`, iconURL: `${searchResult.tracks[0].requestedBy.displayAvatarURL({ dynamic: true })}` });
 
-			// Send new now playing embed
-			interaction.client.channels.cache.get(musicChannelId).send({ embeds: [newNowPlaying] });
-			if (queue) {
+				interaction.client.channels.cache.get(musicChannelId).send({ embeds: [newNowPlaying] });
 				return await interaction.editReply(`Added ${searchResult.tracks[0].title} to queue`);
-			}
-			else {
+			} else {
 				return await interaction.editReply(`Now playing ${searchResult.tracks[0].title}`);
 			}
 		}

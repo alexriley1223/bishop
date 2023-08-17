@@ -1,4 +1,6 @@
 {
+  "useDatabase": true,
+  "useBackupJob": false,
   "driver": "",
   "host": "",
   "database": "",

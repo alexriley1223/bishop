@@ -12,11 +12,11 @@ class Logger {
 
 	error(type, error) {
 		const err = error instanceof Error ? error.message : error;
-		return console.error(`[ERROR][${type.toUpperCase()}][${this.timestamp}]: ${err}`);
+		return console.error(`[ERRO][${type.toUpperCase()}][${this.timestamp}]: ${err}`);
 	}
 
 	warn(type, warning) {
-		return console.warn(`[WARNING][${type.toUpperCase()}][${this.timestamp}]: ${warning}`);
+		return console.warn(`[WARN][${type.toUpperCase()}][${this.timestamp}]: ${warning}`);
 	}
 
 	info(type, content) {
