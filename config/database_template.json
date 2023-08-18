@@ -1,5 +1,5 @@
 {
-  "useDatabase": true,
+  "useDatabase": false,
   "useBackupJob": false,
   "driver": "sqlite",
   "host": "localhost",
