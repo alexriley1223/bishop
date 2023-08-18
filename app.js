@@ -37,20 +37,26 @@ client.bishop = {};
 
 /* Setup Database */
 let sequelize;
-if(databaseConfiguration.useDatabase) {
-	sequelize = new Sequelize(databaseConfiguration.database, databaseConfiguration.username, databaseConfiguration.password, {
-		host: databaseConfiguration.host,
-		dialect: databaseConfiguration.driver,
-		logging: databaseConfiguration.logging,
-		storage: `./database/${databaseConfiguration.name}.sqlite`
-	});
-	
+if (databaseConfiguration.useDatabase) {
+	sequelize = new Sequelize(
+		databaseConfiguration.database,
+		databaseConfiguration.username,
+		databaseConfiguration.password,
+		{
+			host: databaseConfiguration.host,
+			dialect: databaseConfiguration.driver,
+			logging: databaseConfiguration.logging,
+			storage: `./database/${databaseConfiguration.name}.sqlite`,
+		},
+	);
+
 	try {
-		log.info('Boot', `🔄 Checking Database configuration.`);
+		log.info('Boot', '🔄 Checking Database configuration.');
 		sequelize.authenticate();
-		log.info('Boot', `✅ Database is setup and configured correctly.`);
-	  } catch (error) {
-		log.error('Boot', `❌ █ Failed to connect to database. Please check your configuration.`);
+		log.info('Boot', '✅ Database is setup and configured correctly.');
+	}
+	catch (error) {
+		log.error('Boot', '❌ █ Failed to connect to database. Please check your configuration.');
 	}
 }
 
@@ -117,7 +123,7 @@ modules.forEach((m) => {
 							'Boot',
 							`🔄 █ Starting to load ${module.name} events. ${events.length} discovered.`,
 						);
-						
+
 						let eventCount = 0;
 
 						for (const file of events) {
@@ -153,7 +159,10 @@ modules.forEach((m) => {
 					const databases = utils.getAllFiles(`./modules/${m.name}/database`);
 
 					if (databases.length > 0) {
-						log.info('Boot', `🔄 █ Starting to load ${module.name} database. ${databases.length} discovered.`);
+						log.info(
+							'Boot',
+							`🔄 █ Starting to load ${module.name} database. ${databases.length} discovered.`,
+						);
 
 						let databaseCount = 0;
 
@@ -173,7 +182,10 @@ modules.forEach((m) => {
 				if (fs.existsSync(`./modules/${m.name}/jobs`)) {
 					const jobs = utils.getAllFiles(`./modules/${m.name}/jobs`);
 					if (jobs.length > 0) {
-						log.info('Boot', `🔄 █ Starting to load ${module.name} jobs. ${jobs.length} discovered.`);
+						log.info(
+							'Boot',
+							`🔄 █ Starting to load ${module.name} jobs. ${jobs.length} discovered.`,
+						);
 
 						let jobCount = 0;
 

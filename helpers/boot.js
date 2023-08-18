@@ -25,10 +25,7 @@ module.exports = async function() {
 
 	/* Check all root configs exist and required fields exist */
 	/* TODO: Condense into one bishop config file */
-	const configs = [
-		'bot.json',
-		'database.json',
-	];
+	const configs = ['bot.json', 'database.json'];
 
 	const requiredFields = {
 		'bot.json': ['clientId', 'guildId', 'token', 'color', 'name'],

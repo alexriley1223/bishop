@@ -1,21 +1,21 @@
 module.exports = function(sequelize, DataTypes) {
+	const definition = {};
 
-    var definition = {};
+	definition.enabled = false;
 
-    definition.enabled = false;
+	definition.define = async function() {
+		/* Define Table and Sync */
+		await sequelize
+			.define('Config', {
+				entry: DataTypes.STRING,
+			})
+			.sync();
 
-    definition.define = async function() {
+		/* Add any pre-existing data if needed - some extra logic needed to check */
+		await sequelize.models.Config.create({
+			entry: 'example',
+		});
+	};
 
-        /* Define Table and Sync */
-        await sequelize.define('Config', {
-            entry: DataTypes.STRING,
-        }).sync();
-
-        /* Add any pre-existing data if needed - some extra logic needed to check */
-        await sequelize.models.Config.create({
-            entry: 'example',
-        });
-    }
-
-    return definition;
-}
+	return definition;
+};
