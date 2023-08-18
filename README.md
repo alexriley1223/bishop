@@ -35,5 +35,11 @@
 5. Run Bishop
   ``npm run start:prod``
 
+### Officially Supported Packages
+- <a href="https://github.com/alexriley1223/bishop-radio">Bishop Radio</a>
+- <a href="https://github.com/alexriley1223/bishop-points">Bishop Points (TBA)</a>
+
+### Installing Packages
+Clone or download the .zip of the package. Place the package folder inside the modules directory. Configure any options and restart Bishop - make sure the module enabled attribute is set to `true`.
 ### Issues
 This repository is actively maintained by me. If you run into any issues, feel free to <a href="https://github.com/alexriley1223/bishop/issues/new">create a new issue here</a>.
