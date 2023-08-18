@@ -7,11 +7,15 @@ boot();
 const fs = require('fs');
 const { Client, Collection, GatewayIntentBits } = require('discord.js');
 const { clientId, guildId, token } = require('@config/bot.json');
+
+const databaseConfiguration = require('@config/database.json');
+
 const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v9');
 
 const log = require('@helpers/logger');
 const utils = require('@helpers/utils');
+const { Sequelize, DataTypes } = require('sequelize');
 
 const commandArr = [];
 
@@ -31,6 +35,25 @@ const client = new Client({
 client.commands = new Collection();
 client.bishop = {};
 
+/* Setup Database */
+let sequelize;
+if(databaseConfiguration.useDatabase) {
+	sequelize = new Sequelize(databaseConfiguration.database, databaseConfiguration.username, databaseConfiguration.password, {
+		host: databaseConfiguration.host,
+		dialect: databaseConfiguration.driver,
+		logging: databaseConfiguration.logging,
+		storage: `./database/${databaseConfiguration.name}.sqlite`
+	});
+	
+	try {
+		log.info('Boot', `🔄 Checking Database configuration.`);
+		sequelize.authenticate();
+		log.info('Boot', `✅ Database is setup and configured correctly.`);
+	  } catch (error) {
+		log.error('Boot', `❌ █ Failed to connect to database. Please check your configuration.`);
+	}
+}
+
 /* Load Modules */
 const modules = fs.readdirSync('./modules', { withFileTypes: true });
 modules.forEach((m) => {
@@ -45,11 +68,11 @@ modules.forEach((m) => {
 					module.init();
 				}
 				catch (e) {
-					log.error('Boot', `❌ Failed to load module ${module.name}.`);
+					log.error('Boot', `❌ █ Failed to load module ${module.name}.`);
 				}
 				log.info(
 					'Boot',
-					`✅ ${module.name} (${module.version}) initialization complete. Running modulations.`,
+					`✅ █ ${module.name} (${module.version}) initialization complete. Running modulations.`,
 				);
 
 				/* Register module commands */
@@ -58,8 +81,10 @@ modules.forEach((m) => {
 					if (commands.length > 0) {
 						log.info(
 							'Boot',
-							`🔄 Starting to load ${module.name} commands. ${commands.length} discovered.`,
+							`🔄 █ Starting to load ${module.name} commands. ${commands.length} discovered.`,
 						);
+
+						let commandCount = 0;
 
 						for (const file of commands) {
 							const command = require(`./${file}`);
@@ -68,17 +93,18 @@ modules.forEach((m) => {
 								if ('data' in command && 'execute' in command) {
 									client.commands.set(command.data.name, command);
 									commandArr.push(command.data.toJSON());
+									commandCount++;
 								}
 								else {
 									log.warn(
 										'Boot',
-										`The command at ${file} is missing a required "data" or "execute" property.`,
+										`⚠️  ██ The command at ${file} is missing a required "data" or "execute" property.`,
 									);
 								}
 							}
 						}
 
-						log.info('Boot', `✅ ${module.name} commands loaded.`);
+						log.info('Boot', `✅ █ ${commandCount} ${module.name} commands loaded.`);
 					}
 				}
 
@@ -88,15 +114,17 @@ modules.forEach((m) => {
 					if (events.length > 0) {
 						log.info(
 							'Boot',
-							`🔄 Starting to load ${module.name} events. ${events.length} discovered.`,
+							`🔄 █ Starting to load ${module.name} events. ${events.length} discovered.`,
 						);
+						
+						let eventCount = 0;
 
 						for (const file of events) {
 							const singleName = file.split('/').slice(-1).join();
 							if (!fs.existsSync(`./events/${singleName}`)) {
 								log.error(
 									'Boot',
-									`❌ Failed to load event ${singleName} for ${module.name}. Please ensure the template event exists in ~/events.`,
+									`❌ █ Failed to load event ${singleName} for ${module.name}. Please ensure the template event exists in ~/events.`,
 								);
 							}
 
@@ -111,37 +139,62 @@ modules.forEach((m) => {
 							}
 
 							client.bishop.events[singleNameNoExt].push(file);
+
+							eventCount++;
 						}
 
-						log.info('Boot', `✅ ${module.name} events loaded.`);
+						log.info('Boot', `✅ █ ${eventCount} ${module.name} events loaded.`);
 					}
 				}
 
-				/* Run any DB if needed */
+				/* Run any DB definitions/seeding if needed */
+				if (fs.existsSync(`./modules/${m.name}/database`) && databaseConfiguration.useDatabase) {
+					const databases = utils.getAllFiles(`./modules/${m.name}/database`);
+
+					if (databases.length > 0) {
+						log.info('Boot', `🔄 █ Starting to load ${module.name} database. ${databases.length} discovered.`);
+
+						let databaseCount = 0;
+
+						for (const file of databases) {
+							const database = require(`./${file}`)(sequelize, DataTypes);
+							if (database.enabled) {
+								database.define();
+								databaseCount++;
+							}
+						}
+
+						log.info('Boot', `✅ █ ${databaseCount} ${module.name} databases defined.`);
+					}
+				}
 
 				/* Register any Jobs */
 				if (fs.existsSync(`./modules/${m.name}/jobs`)) {
 					const jobs = utils.getAllFiles(`./modules/${m.name}/jobs`);
 					if (jobs.length > 0) {
-						log.info('Boot', `🔄 Starting to load ${module.name} jobs. ${jobs.length} discovered.`);
+						log.info('Boot', `🔄 █ Starting to load ${module.name} jobs. ${jobs.length} discovered.`);
+
+						let jobCount = 0;
 
 						for (const file of jobs) {
 							const job = require(`./${file}`);
 							if (job.enabled) {
 								job.executeJob();
+								jobCount++;
 							}
 						}
 
-						log.info('Boot', `✅ ${module.name} jobs loaded.`);
+						log.info('Boot', `✅ █ ${jobCount} ${module.name} jobs loaded.`);
 					}
 				}
+
+				log.info('Boot', `😋 Done loading module ${module.name} (${module.version}).`);
 			}
 		}
 	}
 });
 
-/* Load Bishop Events */
-/* TODO: move this to a module like bishop-core or something? */
+/* Load Bishop Base Events */
 const bishopEvents = fs.readdirSync('./events').filter((file) => file.endsWith('.js'));
 for (const file of bishopEvents) {
 	const event = require(`./events/${file}`);

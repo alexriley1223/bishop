@@ -134,7 +134,7 @@ modules/**/*.json
 
 # Database
 backup/
-database.sqlite
+database/
 
 # Temp files
 tmp/

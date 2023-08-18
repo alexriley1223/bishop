@@ -1,11 +1,12 @@
 {
   "useDatabase": true,
   "useBackupJob": false,
-  "driver": "",
-  "host": "",
-  "database": "",
-  "username": "",
-  "password": "",
+  "driver": "sqlite",
+  "host": "localhost",
+  "database": "database",
+  "name": "database",
+  "username": "username",
+  "password": "password",
   "logging": false,
-  "port": ""
+  "port": "3306"
 }
