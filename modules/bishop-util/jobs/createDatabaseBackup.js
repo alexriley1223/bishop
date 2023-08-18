@@ -3,9 +3,13 @@ const cron = require('cron');
 const path = require('path');
 const { useBackupJob } = require('@config/database.json');
 
-module.exports = {
-	enabled: useBackupJob,
-	executeJob() {
+module.exports = function(client) {
+
+	const job = {};
+
+	job.enabled = useBackupJob;
+
+	job.executeJob = function executeJob() {
 		const job = new cron.CronJob('* * * * *', () => {
 			const currentDate = new Date().toISOString().split('T')[0];
 
@@ -30,5 +34,7 @@ module.exports = {
 		});
 
 		job.start();
-	},
+	}
+
+	return job;
 };

@@ -190,7 +190,7 @@ modules.forEach((m) => {
 						let jobCount = 0;
 
 						for (const file of jobs) {
-							const job = require(`./${file}`);
+							const job = require(`./${file}`)(client);
 							if (job.enabled) {
 								job.executeJob();
 								jobCount++;
