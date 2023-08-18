@@ -69,6 +69,7 @@ modules.forEach((m) => {
 				}
 				catch (e) {
 					log.error('Boot', `❌ █ Failed to load module ${module.name}.`);
+					return true;
 				}
 				log.info(
 					'Boot',
