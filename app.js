@@ -34,6 +34,7 @@ const client = new Client({
 
 client.commands = new Collection();
 client.bishop = {};
+client.bishop.modules = [];
 
 /* Setup Database */
 let sequelize;
@@ -200,6 +201,9 @@ modules.forEach((m) => {
 						log.info('Boot', `✅ █ ${jobCount} ${module.name} jobs loaded.`);
 					}
 				}
+
+				/* Add to module array */
+				client.bishop.modules.push(`${module.name}`);
 
 				log.info('Boot', `😋 Done loading module ${module.name} (${module.version}).`);
 			}
