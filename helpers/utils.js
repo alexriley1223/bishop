@@ -1,6 +1,22 @@
 const fs = require('fs');
 const path = require('path');
 
+function getParentDirectoryString(file, dir) {
+	let dirString = [];
+	let explodeDir = dir.split("/");
+	
+	while(explodeDir[explodeDir.length - 1] != 'commands') {
+		dirString.push(explodeDir.pop());
+	}
+
+	if(dirString.length == 0) {
+		return path.parse(file).base;
+	} else {
+		dirString.push(path.parse(file).base);
+		return dirString.join('/');
+	}
+}
+
 function getAllFiles(dirPath, arrayOfFiles) {
 	const files = fs.readdirSync(dirPath);
 
@@ -29,6 +45,7 @@ function fireModuleEvents(client, eventName) {
 }
 
 module.exports = {
+	getParentDirectoryString,
 	getAllFiles,
 	fireModuleEvents,
 };

@@ -1,13 +1,17 @@
 const fs = require('fs');
 const cron = require('cron');
 const path = require('path');
-const { useBackupJob } = require('@config/database.json');
+const { useBackupJob, driver } = require('@config/database.json');
 
 module.exports = function(client) {
 
 	const job = {};
 
-	job.enabled = useBackupJob;
+	if(driver && driver == 'sqlite') {
+		job.enabled = useBackupJob;
+	} else {
+		job.enabled = false;
+	}
 
 	job.executeJob = function executeJob() {
 		const job = new cron.CronJob('* * * * *', () => {
