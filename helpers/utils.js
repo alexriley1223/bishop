@@ -1,11 +1,11 @@
 const fs = require('fs');
 const path = require('path');
 
-function getParentDirectoryString(file, dir) {
+function getParentDirectoryString(file, dir, type = 'commands') {
 	let dirString = [];
 	let explodeDir = dir.split("/");
 	
-	while(explodeDir[explodeDir.length - 1] != 'commands') {
+	while(explodeDir[explodeDir.length - 1] != type) {
 		dirString.push(explodeDir.pop());
 	}
 
