@@ -145,4 +145,7 @@ tmp/
 # PM2 Deployment
 pm2.config.js
 
+# Load Order
+load_order.txt
+
 # End of https://www.toptal.com/developers/gitignore/api/node

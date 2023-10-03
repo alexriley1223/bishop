@@ -34,6 +34,30 @@ function getAllFiles(dirPath, arrayOfFiles) {
 	return arrayOfFiles;
 }
 
+/* Compare two arrays, regardless of type and order */
+function equals(a, b) {
+    if (a.length !== b.length) {
+        return false;
+    }
+
+    var seen = {};
+    a.forEach(function(v) {
+        var key = (typeof v) + v;
+        if (!seen[key]) {
+            seen[key] = 0;
+        }
+        seen[key] += 1;
+    });
+
+    return b.every(function(v) {
+        var key = (typeof v) + v;
+        if (seen[key]) {
+            seen[key] -= 1;
+            return true;
+        }
+    });
+}
+
 /* Inject Module Events */
 function fireModuleEvents(client, eventName) {
 	if (client.bishop?.events[eventName]) {
@@ -47,5 +71,6 @@ function fireModuleEvents(client, eventName) {
 module.exports = {
 	getParentDirectoryString,
 	getAllFiles,
+	equals,
 	fireModuleEvents,
 };

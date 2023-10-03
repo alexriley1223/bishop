@@ -62,7 +62,51 @@ if (databaseConfiguration.useDatabase) {
 }
 
 /* Load Modules */
-const modules = fs.readdirSync('./modules', { withFileTypes: true });
+let modules = fs.readdirSync('./modules', { withFileTypes: true });
+let loadOrderArr = [];
+
+/* Check if load order exists - if so check if it is up to date. If not, generate a fresh one and restart application */
+if(fs.existsSync('./load_order.txt')) {
+	const loadOrder = fs.readFileSync('./load_order.txt', { encoding: 'utf8', flag: 'r'});
+	loadOrderArr = loadOrder.split("\n");
+	const moduleArr = modules.map(mod => mod.name);
+
+	if(!utils.equals(loadOrderArr, moduleArr)) {
+		throw Error('❌ Load order is not in sync with modules directory.');
+	} else {
+		log.info(
+			'Boot',
+			`✅ Load order is in sync with modules directory, proceeding to module activation.`,
+		);
+	}
+} else {
+	fs.writeFileSync('./load_order.txt', '', (err) => {
+		if(err) {
+			throw Error('❌ Failed to create load order file.');
+		} else {
+			throw `✅ Created load order file successfully. Reloading application.`;
+		}
+	});
+
+	let modCount = 0;
+	modules.forEach((m) => {
+		fs.appendFileSync('./load_order.txt', (modCount == modules.length - 1) ? `${m.name}` : `${m.name}\n`, (err) => {
+			if(err) {
+				throw Error('❌ Failed to write to load order file.');
+			}
+		});
+		modCount++;
+	});
+}
+
+/* Sort modules based on load order */
+let modulesSorted = [];
+loadOrderArr.forEach((loa) => {
+	modulesSorted.push(modules.find(mod => mod.name === loa))
+});
+
+modules = modulesSorted;
+
 modules.forEach((m) => {
 	if (m.isDirectory()) {
 		if (fs.existsSync(`./modules/${m.name}/init.js`)) {
