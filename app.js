@@ -71,6 +71,11 @@ if(fs.existsSync('./load_order.txt')) {
 	loadOrderArr = loadOrder.split("\n");
 	const moduleArr = modules.map(mod => mod.name);
 
+	/* Extra blank line */
+	if(loadOrderArr[loadOrderArr.length - 1] == '') {
+		loadOrderArr.pop();
+	}
+
 	if(!utils.equals(loadOrderArr, moduleArr)) {
 		throw Error('❌ Load order is not in sync with modules directory.');
 	} else {
