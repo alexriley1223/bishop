@@ -20,7 +20,6 @@ const { Sequelize, DataTypes } = require('sequelize');
 const commandArr = [];
 
 /* Initiate client */
-/* TODO: ALlow modules to require Gateway Intents checks */
 const client = new Client({
 	intents: [
 		GatewayIntentBits.Guilds,
@@ -65,7 +64,7 @@ if (databaseConfiguration.useDatabase) {
 let modules = fs.readdirSync('./modules', { withFileTypes: true });
 let loadOrderArr = [];
 
-/* Check if load order exists - if so check if it is up to date. If not, generate a fresh one and restart application */
+/* Check if load order exists */
 if(fs.existsSync('./load_order.txt')) {
 	const loadOrder = fs.readFileSync('./load_order.txt', { encoding: 'utf8', flag: 'r'});
 	loadOrderArr = loadOrder.split("\n");
@@ -112,9 +111,16 @@ loadOrderArr.forEach((loa) => {
 
 modules = modulesSorted;
 
+/* Load Modules */
 modules.forEach((m) => {
 	if (m.isDirectory()) {
 		if (fs.existsSync(`./modules/${m.name}/init.js`)) {
+
+			if(!fs.existsSync(`./modules/${m.name}/config.json`)) {
+				log.error('Boot', `❌ Failed to attempt to load module ${m.name}. Missing configuration file.`);
+				return;
+			}
+
 			const module = require(`./modules/${m.name}/init`)(client);
 
 			if (module.enabled) {
@@ -124,7 +130,7 @@ modules.forEach((m) => {
 					module.init();
 				}
 				catch (e) {
-					log.error('Boot', `❌ █ Failed to load module ${module.name}.`);
+					log.error('Boot', `❌ █ Failed to load module ${module.name}. Misconfigured init file.`);
 					return true;
 				}
 				log.info(
@@ -167,7 +173,22 @@ modules.forEach((m) => {
 
 				/* Register module events to client events object */
 				if (fs.existsSync(`./modules/${m.name}/events`)) {
-					const events = utils.getAllFiles(`./modules/${m.name}/events`);
+					let events = utils.getAllFiles(`./modules/${m.name}/events`);
+					const evtConfig = require(`./modules/${m.name}/config.json`).events;
+					let verifiedEvents = [];
+
+					/* Check if events are enabled in config - handled differently than other types */
+					for (const i of events) {
+						const trimmed = i.replace(`modules/${m.name}/events/`, '');
+
+						/* Check file name against config */
+						if(evtConfig[trimmed]) {
+							verifiedEvents.push(i);
+						}
+					}
+
+					events = verifiedEvents;
+					
 					if (events.length > 0) {
 						log.info(
 							'Boot',

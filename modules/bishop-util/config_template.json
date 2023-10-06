@@ -1,3 +1,6 @@
 {
-    "isModuleEnabled": true
+    "isModuleEnabled": true,
+    "events": {
+        "ready.js": true
+    }
 }

@@ -59,10 +59,10 @@ function equals(a, b) {
 }
 
 /* Inject Module Events */
-function fireModuleEvents(client, eventName) {
-	if (client.bishop?.events[eventName]) {
+function fireModuleEvents(client, eventName, ...params) {
+	if (client.bishop.events && client.bishop.events[eventName]) {
 		client.bishop.events[eventName].forEach((event) => {
-			require(`../${event}`)(client);
+			require(`../${event}`)(client, params);
 		});
 	}
 	return true;

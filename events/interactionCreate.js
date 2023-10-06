@@ -25,6 +25,6 @@ module.exports = {
 			});
 		}
 
-		utils.fireModuleEvents(interaction.client, this.name);
+		utils.fireModuleEvents(interaction.client, this.name, interaction);
 	},
 };
