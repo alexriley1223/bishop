@@ -9,20 +9,20 @@ module.exports = {
 			'Interaction',
 			`${interaction.user.username} in #${interaction.channel.name} triggered an interaction (/${interaction.commandName}).`,
 		);
+		
+		if(interaction.type === InteractionType.ApplicationCommand) {
+			const command = interaction.client.commands.get(interaction.commandName);
 
-		if (!interaction.type === InteractionType.ApplicationCommand) return;
-
-		const command = interaction.client.commands.get(interaction.commandName);
-
-		try {
-			command.execute(interaction);
-		}
-		catch (error) {
-			console.error(error);
-			interaction.reply({
-				content: 'There was an error while executing this command!',
-				ephemeral: true,
-			});
+			try {
+				command.execute(interaction);
+			}
+			catch (error) {
+				console.error(error);
+				interaction.reply({
+					content: 'There was an error while executing this command!',
+					ephemeral: true,
+				});
+			}
 		}
 
 		utils.fireModuleEvents(interaction.client, this.name, interaction);
