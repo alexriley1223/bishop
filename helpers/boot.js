@@ -4,6 +4,8 @@
 const semver = require('semver');
 const fs = require('fs');
 const log = require('./logger');
+const { version } = require('../package.json');
+const axios = require('axios');
 
 module.exports = async function() {
 	// Bishop ASCII
@@ -23,13 +25,24 @@ module.exports = async function() {
 		log.info('BOOT', `✅ Node version is correct (${process.versions.node}).`);
 	}
 
+	/* Check Bishop Version */
+	await axios.get('https://api.github.com/repos/alexriley1223/bishop/tags')
+		.then(res => {
+			const versions = res.data.sort((v1, v2) => semver.compare(v2.name, v1.name));
+			if(versions[0].name != `v${version}`) {
+				log.warn('BOOT', `⚠️  Bot is not the latest version. Please update! Yours: v${version} - Latest: ${versions[0].name}`);
+			}
+		})
+		.catch(err => {
+			log.warn('BOOT', `⚠️  Unable to fetch latest bot version. Proceed with caution!`);
+		});
+
 	/* Check all root configs exist and required fields exist */
-	/* TODO: Condense into one bishop config file */
 	const configs = ['bot.json', 'database.json'];
 
 	const requiredFields = {
 		'bot.json': ['clientId', 'guildId', 'token', 'color', 'name'],
-		'database.json': [],
+		'database.json': ['useDatabase', 'useBackupJob', 'driver', 'host', 'database', 'name', 'username', 'password', 'logging', 'port'],
 	};
 
 	configs.forEach((e) => {

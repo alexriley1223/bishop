@@ -72,5 +72,5 @@ module.exports = {
 	getParentDirectoryString,
 	getAllFiles,
 	equals,
-	fireModuleEvents,
+	fireModuleEvents
 };

@@ -2,7 +2,6 @@ require('module-alias/register');
 
 /* Inital Boot Check */
 const boot = require('@helpers/boot');
-boot();
 
 const fs = require('fs');
 const { Client, Collection, GatewayIntentBits } = require('discord.js');
@@ -17,304 +16,322 @@ const log = require('@helpers/logger');
 const utils = require('@helpers/utils');
 const { Sequelize, DataTypes } = require('sequelize');
 
-const commandArr = [];
+// Run boot sequence checks, then initiate bot
+boot().then(() => { main(); });
 
-/* Initiate client */
-const client = new Client({
-	intents: [
-		GatewayIntentBits.Guilds,
-		GatewayIntentBits.GuildMessageReactions,
-		GatewayIntentBits.GuildMessageTyping,
-		GatewayIntentBits.GuildMessages,
-		GatewayIntentBits.GuildMembers,
-		GatewayIntentBits.GuildVoiceStates,
-	],
-});
+/* Initiate Bot */
+async function main() {
 
-client.commands = new Collection();
-client.bishop = {};
-client.bishop.modules = [];
+	const commandArr = [];
 
-/* Setup Database */
-let sequelize;
-if (databaseConfiguration.useDatabase) {
-	sequelize = new Sequelize(
-		databaseConfiguration.database,
-		databaseConfiguration.username,
-		databaseConfiguration.password,
-		{
-			host: databaseConfiguration.host,
-			dialect: databaseConfiguration.driver,
-			logging: databaseConfiguration.logging,
-			storage: `./database/${databaseConfiguration.name}.sqlite`,
-		},
-	);
-
-	try {
-		log.info('Boot', '🔄 Checking Database configuration.');
-		sequelize.authenticate();
-		log.info('Boot', '✅ Database is setup and configured correctly.');
-	}
-	catch (error) {
-		log.error('Boot', '❌ █ Failed to connect to database. Please check your configuration.');
-	}
-}
-
-/* Load Modules */
-let modules = fs.readdirSync('./modules', { withFileTypes: true });
-let loadOrderArr = [];
-
-/* Check if load order exists */
-if(fs.existsSync('./load_order.txt')) {
-	const loadOrder = fs.readFileSync('./load_order.txt', { encoding: 'utf8', flag: 'r'});
-	loadOrderArr = loadOrder.split("\n");
-	const moduleArr = modules.map(mod => mod.name);
-
-	/* Extra blank line */
-	if(loadOrderArr[loadOrderArr.length - 1] == '') {
-		loadOrderArr.pop();
-	}
-
-	if(!utils.equals(loadOrderArr, moduleArr)) {
-		throw Error('❌ Load order is not in sync with modules directory.');
-	} else {
-		log.info(
-			'Boot',
-			`✅ Load order is in sync with modules directory, proceeding to module activation.`,
-		);
-	}
-} else {
-	fs.writeFileSync('./load_order.txt', '', (err) => {
-		if(err) {
-			throw Error('❌ Failed to create load order file.');
-		} else {
-			throw `✅ Created load order file successfully. Reloading application.`;
-		}
+	/* Initiate client */
+	const client = new Client({
+		intents: [
+			GatewayIntentBits.Guilds,
+			GatewayIntentBits.GuildMessageReactions,
+			GatewayIntentBits.GuildMessageTyping,
+			GatewayIntentBits.GuildMessages,
+			GatewayIntentBits.GuildMembers,
+			GatewayIntentBits.GuildVoiceStates,
+		],
 	});
 
-	let modCount = 0;
-	modules.forEach((m) => {
-		fs.appendFileSync('./load_order.txt', (modCount == modules.length - 1) ? `${m.name}` : `${m.name}\n`, (err) => {
+	client.commands = new Collection();
+	client.bishop = {};
+	client.bishop.modules = [];
+
+	/* Setup Database */
+	let sequelize;
+	if (databaseConfiguration.useDatabase) {
+		sequelize = new Sequelize(
+			databaseConfiguration.database,
+			databaseConfiguration.username,
+			databaseConfiguration.password,
+			{
+				host: databaseConfiguration.host,
+				dialect: databaseConfiguration.driver,
+				logging: databaseConfiguration.logging,
+				storage: `./database/${databaseConfiguration.name}.sqlite`,
+			},
+		);
+
+		try {
+			log.info('Boot', '🔄 Checking Database configuration.');
+			sequelize.authenticate();
+			log.info('Boot', '✅ Database is setup and configured correctly.');
+		}
+		catch (error) {
+			log.error('Boot', '❌ █ Failed to connect to database. Please check your configuration.');
+		}
+	}
+
+	/* Load Modules */
+	let modules = fs.readdirSync('./modules', { withFileTypes: true });
+	let loadOrderArr = [];
+
+	/* Check if load order exists */
+	if(fs.existsSync('./load_order.txt')) {
+		const loadOrder = fs.readFileSync('./load_order.txt', { encoding: 'utf8', flag: 'r'});
+		loadOrderArr = loadOrder.split("\n");
+		const moduleArr = modules.map(mod => mod.name);
+
+		/* Extra blank line */
+		if(loadOrderArr[loadOrderArr.length - 1] == '') {
+			loadOrderArr.pop();
+		}
+
+		if(!utils.equals(loadOrderArr, moduleArr)) {
+			throw Error('❌ Load order is not in sync with modules directory.');
+		} else {
+			log.info(
+				'Boot',
+				`✅ Load order is in sync with modules directory, proceeding to module activation.`,
+			);
+		}
+	} else {
+		fs.writeFileSync('./load_order.txt', '', (err) => {
 			if(err) {
-				throw Error('❌ Failed to write to load order file.');
+				throw Error('❌ Failed to create load order file.');
+			} else {
+				throw `✅ Created load order file successfully. Reloading application.`;
 			}
 		});
-		modCount++;
+
+		let modCount = 0;
+		modules.forEach((m) => {
+			fs.appendFileSync('./load_order.txt', (modCount == modules.length - 1) ? `${m.name}` : `${m.name}\n`, (err) => {
+				if(err) {
+					throw Error('❌ Failed to write to load order file.');
+				}
+			});
+			modCount++;
+		});
+	}
+
+	/* Sort modules based on load order */
+	let modulesSorted = [];
+	loadOrderArr.forEach((loa) => {
+		modulesSorted.push(modules.find(mod => mod.name === loa))
 	});
-}
 
-/* Sort modules based on load order */
-let modulesSorted = [];
-loadOrderArr.forEach((loa) => {
-	modulesSorted.push(modules.find(mod => mod.name === loa))
-});
+	modules = modulesSorted;
 
-modules = modulesSorted;
+	/* Load Modules */
+	modules.forEach((m) => {
+		if (m.isDirectory()) {
+			if (fs.existsSync(`./modules/${m.name}/init.js`)) {
 
-/* Load Modules */
-modules.forEach((m) => {
-	if (m.isDirectory()) {
-		if (fs.existsSync(`./modules/${m.name}/init.js`)) {
-
-			if(!fs.existsSync(`./modules/${m.name}/config.json`)) {
-				log.error('Boot', `❌ Failed to attempt to load module ${m.name}. Missing configuration file.`);
-				return;
-			}
-
-			const module = require(`./modules/${m.name}/init`)(client);
-
-			if (module.enabled) {
-				/* Run arbitrary init function for module specific dependencies or boot */
-				log.info('Boot', `🔄 Starting to load module ${module.name} (${module.version}).`);
-				try {
-					module.init();
+				if(!fs.existsSync(`./modules/${m.name}/config.json`)) {
+					log.error('Boot', `❌ Failed to attempt to load module ${m.name}. Missing configuration file.`);
+					return;
 				}
-				catch (e) {
-					log.error('Boot', `❌ █ Failed to load module ${module.name}. Misconfigured init file.`);
-					return true;
-				}
-				log.info(
-					'Boot',
-					`✅ █ ${module.name} (${module.version}) initialization complete. Running modulations.`,
-				);
 
-				/* Register module commands */
-				if (fs.existsSync(`./modules/${m.name}/commands`)) {
-					const commands = utils.getAllFiles(`./modules/${m.name}/commands`);
-					if (commands.length > 0) {
-						log.info(
-							'Boot',
-							`🔄 █ Starting to load ${module.name} commands. ${commands.length} discovered.`,
-						);
+				const module = require(`./modules/${m.name}/init`)(client);
 
-						let commandCount = 0;
+				if (module.enabled) {
+					/* Run arbitrary init function for module specific dependencies or boot */
+					log.info('Boot', `🔄 Starting to load module ${module.name} (${module.version}).`);
+					try {
+						module.init();
+					}
+					catch (e) {
+						log.error('Boot', `❌ █ Failed to load module ${module.name}. Misconfigured init file.`);
+						return true;
+					}
+					log.info(
+						'Boot',
+						`✅ █ ${module.name} (${module.version}) initialization complete. Running modulations.`,
+					);
 
-						for (const file of commands) {
-							const command = require(`./${file}`);
+					/* Register module commands */
+					if (fs.existsSync(`./modules/${m.name}/commands`)) {
+						const commands = utils.getAllFiles(`./modules/${m.name}/commands`);
+						if (commands.length > 0) {
+							log.info(
+								'Boot',
+								`🔄 █ Starting to load ${module.name} commands. ${commands.length} discovered.`,
+							);
 
-							if ('enabled' in command && command.enabled) {
-								if ('data' in command && 'execute' in command) {
-									client.commands.set(command.data.name, command);
-									commandArr.push(command.data.toJSON());
-									commandCount++;
+							let commandCount = 0;
+
+							for (const file of commands) {
+								const command = require(`./${file}`);
+
+								if ('enabled' in command && command.enabled) {
+									if ('data' in command && 'execute' in command) {
+										client.commands.set(command.data.name, command);
+										commandArr.push(command.data.toJSON());
+										commandCount++;
+									}
+									else {
+										log.warn(
+											'Boot',
+											`⚠️  ██ The command at ${file} is missing a required "data" or "execute" property.`,
+										);
+									}
 								}
-								else {
-									log.warn(
+							}
+
+							log.info('Boot', `✅ █ ${commandCount} ${module.name} commands loaded.`);
+						}
+					}
+
+					/* Register module events to client events object */
+					if (fs.existsSync(`./modules/${m.name}/events`)) {
+						let events = utils.getAllFiles(`./modules/${m.name}/events`);
+						const evtConfig = require(`./modules/${m.name}/config.json`).events;
+						let verifiedEvents = [];
+
+						/* Check if events are enabled in config - handled differently than other types */
+						for (const i of events) {
+							const trimmed = i.replace(`modules/${m.name}/events/`, '');
+
+							/* Check file name against config */
+							if(evtConfig[trimmed]) {
+								verifiedEvents.push(i);
+							}
+						}
+
+						events = verifiedEvents;
+						
+						if (events.length > 0) {
+							log.info(
+								'Boot',
+								`🔄 █ Starting to load ${module.name} events. ${events.length} discovered.`,
+							);
+
+							let eventCount = 0;
+
+							for (const file of events) {
+								const singleName = file.split('/').slice(-1).join();
+								if (!fs.existsSync(`./events/${singleName}`)) {
+									log.error(
 										'Boot',
-										`⚠️  ██ The command at ${file} is missing a required "data" or "execute" property.`,
+										`❌ █ Failed to load event ${singleName} for ${module.name}. Please ensure the template event exists in ~/events.`,
 									);
 								}
-							}
-						}
 
-						log.info('Boot', `✅ █ ${commandCount} ${module.name} commands loaded.`);
+								const singleNameNoExt = singleName.replace('.js', '');
+
+								if (!client.bishop.events) {
+									client.bishop.events = {};
+								}
+
+								if (!client.bishop.events[singleNameNoExt]) {
+									client.bishop.events[singleNameNoExt] = [];
+								}
+
+								client.bishop.events[singleNameNoExt].push(file);
+
+								eventCount++;
+							}
+
+							log.info('Boot', `✅ █ ${eventCount} ${module.name} events loaded.`);
+						}
 					}
+
+					/* Run any DB definitions/seeding if needed */
+					if (fs.existsSync(`./modules/${m.name}/database`) && databaseConfiguration.useDatabase) {
+						const databases = utils.getAllFiles(`./modules/${m.name}/database`);
+
+						if (databases.length > 0) {
+							log.info(
+								'Boot',
+								`🔄 █ Starting to load ${module.name} database. ${databases.length} discovered.`,
+							);
+
+							let databaseCount = 0;
+
+							for (const file of databases) {
+								const database = require(`./${file}`)(sequelize, DataTypes);
+								if (database.enabled) {
+									database.define();
+									databaseCount++;
+								}
+							}
+
+							log.info('Boot', `✅ █ ${databaseCount} ${module.name} databases defined.`);
+						}
+					}
+
+					/* Register any Jobs */
+					if (fs.existsSync(`./modules/${m.name}/jobs`)) {
+						const jobs = utils.getAllFiles(`./modules/${m.name}/jobs`);
+						if (jobs.length > 0) {
+							log.info(
+								'Boot',
+								`🔄 █ Starting to load ${module.name} jobs. ${jobs.length} discovered.`,
+							);
+
+							let jobCount = 0;
+
+							for (const file of jobs) {
+								const job = require(`./${file}`)(client);
+								if (job.enabled) {
+									job.executeJob();
+									jobCount++;
+								}
+							}
+
+							log.info('Boot', `✅ █ ${jobCount} ${module.name} jobs loaded.`);
+						}
+					}
+
+					/* Add to module array */
+					client.bishop.modules.push(`${module.name}`);
+
+					log.info('Boot', `😋 Done loading module ${module.name} (${module.version}).`);
 				}
-
-				/* Register module events to client events object */
-				if (fs.existsSync(`./modules/${m.name}/events`)) {
-					let events = utils.getAllFiles(`./modules/${m.name}/events`);
-					const evtConfig = require(`./modules/${m.name}/config.json`).events;
-					let verifiedEvents = [];
-
-					/* Check if events are enabled in config - handled differently than other types */
-					for (const i of events) {
-						const trimmed = i.replace(`modules/${m.name}/events/`, '');
-
-						/* Check file name against config */
-						if(evtConfig[trimmed]) {
-							verifiedEvents.push(i);
-						}
-					}
-
-					events = verifiedEvents;
-					
-					if (events.length > 0) {
-						log.info(
-							'Boot',
-							`🔄 █ Starting to load ${module.name} events. ${events.length} discovered.`,
-						);
-
-						let eventCount = 0;
-
-						for (const file of events) {
-							const singleName = file.split('/').slice(-1).join();
-							if (!fs.existsSync(`./events/${singleName}`)) {
-								log.error(
-									'Boot',
-									`❌ █ Failed to load event ${singleName} for ${module.name}. Please ensure the template event exists in ~/events.`,
-								);
-							}
-
-							const singleNameNoExt = singleName.replace('.js', '');
-
-							if (!client.bishop.events) {
-								client.bishop.events = {};
-							}
-
-							if (!client.bishop.events[singleNameNoExt]) {
-								client.bishop.events[singleNameNoExt] = [];
-							}
-
-							client.bishop.events[singleNameNoExt].push(file);
-
-							eventCount++;
-						}
-
-						log.info('Boot', `✅ █ ${eventCount} ${module.name} events loaded.`);
-					}
-				}
-
-				/* Run any DB definitions/seeding if needed */
-				if (fs.existsSync(`./modules/${m.name}/database`) && databaseConfiguration.useDatabase) {
-					const databases = utils.getAllFiles(`./modules/${m.name}/database`);
-
-					if (databases.length > 0) {
-						log.info(
-							'Boot',
-							`🔄 █ Starting to load ${module.name} database. ${databases.length} discovered.`,
-						);
-
-						let databaseCount = 0;
-
-						for (const file of databases) {
-							const database = require(`./${file}`)(sequelize, DataTypes);
-							if (database.enabled) {
-								database.define();
-								databaseCount++;
-							}
-						}
-
-						log.info('Boot', `✅ █ ${databaseCount} ${module.name} databases defined.`);
-					}
-				}
-
-				/* Register any Jobs */
-				if (fs.existsSync(`./modules/${m.name}/jobs`)) {
-					const jobs = utils.getAllFiles(`./modules/${m.name}/jobs`);
-					if (jobs.length > 0) {
-						log.info(
-							'Boot',
-							`🔄 █ Starting to load ${module.name} jobs. ${jobs.length} discovered.`,
-						);
-
-						let jobCount = 0;
-
-						for (const file of jobs) {
-							const job = require(`./${file}`)(client);
-							if (job.enabled) {
-								job.executeJob();
-								jobCount++;
-							}
-						}
-
-						log.info('Boot', `✅ █ ${jobCount} ${module.name} jobs loaded.`);
-					}
-				}
-
-				/* Add to module array */
-				client.bishop.modules.push(`${module.name}`);
-
-				log.info('Boot', `😋 Done loading module ${module.name} (${module.version}).`);
 			}
 		}
-	}
-});
+	});
 
-/* Load Bishop Base Events */
-const bishopEvents = fs.readdirSync('./events').filter((file) => file.endsWith('.js'));
-for (const file of bishopEvents) {
-	const event = require(`./events/${file}`);
+	/* Load Bishop Base Events */
+	const bishopEvents = fs.readdirSync('./events').filter((file) => file.endsWith('.js'));
+	for (const file of bishopEvents) {
+		const event = require(`./events/${file}`);
 
-	if (event.once) {
-		client.once(event.name, (...args) => event.execute(...args));
+		if (event.once) {
+			client.once(event.name, (...args) => event.execute(...args));
+		}
+		else {
+			client.on(event.name, (...args) => event.execute(...args));
+		}
 	}
-	else {
-		client.on(event.name, (...args) => event.execute(...args));
-	}
-}
 
-/* Deploy Commands */
-const rest = new REST().setToken(token);
-(async () => {
+	/* Check for duplicate commands */
+	var commandNameArr = commandArr.map(function(command) { return command.name });
+	var isCommandNameDuplicate = commandNameArr.some(function(item, idx) {
+		return commandNameArr.indexOf(item) != idx;
+	});
+
+	if(isCommandNameDuplicate) {
+		throw Error('❌ Commands contain duplicate names and cannot be registered. Please remove or rename conflicting commands.');
+	}
+
+	/* Deploy Commands */
+	const rest = new REST().setToken(token);
+	(async () => {
+		try {
+			log.info('BOOT', `Started refreshing ${commandArr.length} application (/) commands.`);
+
+			const data = await rest.put(Routes.applicationGuildCommands(clientId, guildId), {
+				body: commandArr,
+			});
+
+			log.info('BOOT', `Successfully reloaded ${data.length} application (/) commands.`);
+		}
+		catch (error) {
+			throw Error('❌ Failed to register application commands. Please try again.');
+		}
+	})();
+
+	/* Login Bot */
 	try {
-		log.info('BOOT', `Started refreshing ${commandArr.length} application (/) commands.`);
-
-		const data = await rest.put(Routes.applicationGuildCommands(clientId, guildId), {
-			body: commandArr,
-		});
-
-		log.info('BOOT', `Successfully reloaded ${data.length} application (/) commands.`);
+		client.login(token);
 	}
-	catch (error) {
-		throw Error('❌ Failed to register application commands. Please try again.');
+	catch (e) {
+		throw Error('❌ Failed to login Bot. Please try again.');
 	}
-})();
 
-/* Login Bot */
-try {
-	client.login(token);
-}
-catch (e) {
-	throw Error('❌ Failed to login Bot. Please try again.');
 }
