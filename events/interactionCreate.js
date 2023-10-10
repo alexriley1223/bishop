@@ -9,8 +9,8 @@ module.exports = {
 			'Interaction',
 			`${interaction.user.username} in #${interaction.channel.name} triggered an interaction (/${interaction.commandName}).`,
 		);
-		
-		if(interaction.type === InteractionType.ApplicationCommand) {
+
+		if (interaction.type === InteractionType.ApplicationCommand) {
 			const command = interaction.client.commands.get(interaction.commandName);
 
 			try {

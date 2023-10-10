@@ -2,16 +2,17 @@ const fs = require('fs');
 const path = require('path');
 
 function getParentDirectoryString(file, dir, type = 'commands') {
-	let dirString = [];
-	let explodeDir = dir.split("/");
-	
-	while(explodeDir[explodeDir.length - 1] != type) {
+	const dirString = [];
+	const explodeDir = dir.split('/');
+
+	while (explodeDir[explodeDir.length - 1] != type) {
 		dirString.push(explodeDir.pop());
 	}
 
-	if(dirString.length == 0) {
+	if (dirString.length == 0) {
 		return path.parse(file).base;
-	} else {
+	}
+	else {
 		dirString.push(path.parse(file).base);
 		return dirString.join('/');
 	}
@@ -36,26 +37,26 @@ function getAllFiles(dirPath, arrayOfFiles) {
 
 /* Compare two arrays, regardless of type and order */
 function equals(a, b) {
-    if (a.length !== b.length) {
-        return false;
-    }
+	if (a.length !== b.length) {
+		return false;
+	}
 
-    var seen = {};
-    a.forEach(function(v) {
-        var key = (typeof v) + v;
-        if (!seen[key]) {
-            seen[key] = 0;
-        }
-        seen[key] += 1;
-    });
+	const seen = {};
+	a.forEach(function(v) {
+		const key = typeof v + v;
+		if (!seen[key]) {
+			seen[key] = 0;
+		}
+		seen[key] += 1;
+	});
 
-    return b.every(function(v) {
-        var key = (typeof v) + v;
-        if (seen[key]) {
-            seen[key] -= 1;
-            return true;
-        }
-    });
+	return b.every(function(v) {
+		const key = typeof v + v;
+		if (seen[key]) {
+			seen[key] -= 1;
+			return true;
+		}
+	});
 }
 
 /* Inject Module Events */
@@ -72,5 +73,5 @@ module.exports = {
 	getParentDirectoryString,
 	getAllFiles,
 	equals,
-	fireModuleEvents
+	fireModuleEvents,
 };

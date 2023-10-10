@@ -17,11 +17,12 @@ const utils = require('@helpers/utils');
 const { Sequelize, DataTypes } = require('sequelize');
 
 // Run boot sequence checks, then initiate bot
-boot().then(() => { main(); });
+boot().then(() => {
+	main();
+});
 
 /* Initiate Bot */
 async function main() {
-
 	const commandArr = [];
 
 	/* Initiate client */
@@ -70,48 +71,55 @@ async function main() {
 	let loadOrderArr = [];
 
 	/* Check if load order exists */
-	if(fs.existsSync('./load_order.txt')) {
-		const loadOrder = fs.readFileSync('./load_order.txt', { encoding: 'utf8', flag: 'r'});
-		loadOrderArr = loadOrder.split("\n");
-		const moduleArr = modules.map(mod => mod.name);
+	if (fs.existsSync('./load_order.txt')) {
+		const loadOrder = fs.readFileSync('./load_order.txt', { encoding: 'utf8', flag: 'r' });
+		loadOrderArr = loadOrder.split('\n');
+		const moduleArr = modules.map((mod) => mod.name);
 
 		/* Extra blank line */
-		if(loadOrderArr[loadOrderArr.length - 1] == '') {
+		if (loadOrderArr[loadOrderArr.length - 1] == '') {
 			loadOrderArr.pop();
 		}
 
-		if(!utils.equals(loadOrderArr, moduleArr)) {
+		if (!utils.equals(loadOrderArr, moduleArr)) {
 			throw Error('❌ Load order is not in sync with modules directory.');
-		} else {
+		}
+		else {
 			log.info(
 				'Boot',
-				`✅ Load order is in sync with modules directory, proceeding to module activation.`,
+				'✅ Load order is in sync with modules directory, proceeding to module activation.',
 			);
 		}
-	} else {
+	}
+	else {
 		fs.writeFileSync('./load_order.txt', '', (err) => {
-			if(err) {
+			if (err) {
 				throw Error('❌ Failed to create load order file.');
-			} else {
-				throw `✅ Created load order file successfully. Reloading application.`;
+			}
+			else {
+				throw '✅ Created load order file successfully. Reloading application.';
 			}
 		});
 
 		let modCount = 0;
 		modules.forEach((m) => {
-			fs.appendFileSync('./load_order.txt', (modCount == modules.length - 1) ? `${m.name}` : `${m.name}\n`, (err) => {
-				if(err) {
-					throw Error('❌ Failed to write to load order file.');
-				}
-			});
+			fs.appendFileSync(
+				'./load_order.txt',
+				modCount == modules.length - 1 ? `${m.name}` : `${m.name}\n`,
+				(err) => {
+					if (err) {
+						throw Error('❌ Failed to write to load order file.');
+					}
+				},
+			);
 			modCount++;
 		});
 	}
 
 	/* Sort modules based on load order */
-	let modulesSorted = [];
+	const modulesSorted = [];
 	loadOrderArr.forEach((loa) => {
-		modulesSorted.push(modules.find(mod => mod.name === loa))
+		modulesSorted.push(modules.find((mod) => mod.name === loa));
 	});
 
 	modules = modulesSorted;
@@ -120,9 +128,11 @@ async function main() {
 	modules.forEach((m) => {
 		if (m.isDirectory()) {
 			if (fs.existsSync(`./modules/${m.name}/init.js`)) {
-
-				if(!fs.existsSync(`./modules/${m.name}/config.json`)) {
-					log.error('Boot', `❌ Failed to attempt to load module ${m.name}. Missing configuration file.`);
+				if (!fs.existsSync(`./modules/${m.name}/config.json`)) {
+					log.error(
+						'Boot',
+						`❌ Failed to attempt to load module ${m.name}. Missing configuration file.`,
+					);
 					return;
 				}
 
@@ -135,7 +145,10 @@ async function main() {
 						module.init();
 					}
 					catch (e) {
-						log.error('Boot', `❌ █ Failed to load module ${module.name}. Misconfigured init file.`);
+						log.error(
+							'Boot',
+							`❌ █ Failed to load module ${module.name}. Misconfigured init file.`,
+						);
 						return true;
 					}
 					log.info(
@@ -180,20 +193,20 @@ async function main() {
 					if (fs.existsSync(`./modules/${m.name}/events`)) {
 						let events = utils.getAllFiles(`./modules/${m.name}/events`);
 						const evtConfig = require(`./modules/${m.name}/config.json`).events;
-						let verifiedEvents = [];
+						const verifiedEvents = [];
 
 						/* Check if events are enabled in config - handled differently than other types */
 						for (const i of events) {
 							const trimmed = i.replace(`modules/${m.name}/events/`, '');
 
 							/* Check file name against config */
-							if(evtConfig[trimmed]) {
+							if (evtConfig[trimmed]) {
 								verifiedEvents.push(i);
 							}
 						}
 
 						events = verifiedEvents;
-						
+
 						if (events.length > 0) {
 							log.info(
 								'Boot',
@@ -300,13 +313,17 @@ async function main() {
 	}
 
 	/* Check for duplicate commands */
-	var commandNameArr = commandArr.map(function(command) { return command.name });
-	var isCommandNameDuplicate = commandNameArr.some(function(item, idx) {
+	const commandNameArr = commandArr.map(function(command) {
+		return command.name;
+	});
+	const isCommandNameDuplicate = commandNameArr.some(function(item, idx) {
 		return commandNameArr.indexOf(item) != idx;
 	});
 
-	if(isCommandNameDuplicate) {
-		throw Error('❌ Commands contain duplicate names and cannot be registered. Please remove or rename conflicting commands.');
+	if (isCommandNameDuplicate) {
+		throw Error(
+			'❌ Commands contain duplicate names and cannot be registered. Please remove or rename conflicting commands.',
+		);
 	}
 
 	/* Deploy Commands */
@@ -333,5 +350,4 @@ async function main() {
 	catch (e) {
 		throw Error('❌ Failed to login Bot. Please try again.');
 	}
-
 }

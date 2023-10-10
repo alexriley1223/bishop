@@ -4,12 +4,12 @@ const path = require('path');
 const { useBackupJob, driver } = require('@config/database.json');
 
 module.exports = function(client) {
-
 	const job = {};
 
-	if(driver && driver == 'sqlite') {
+	if (driver && driver == 'sqlite') {
 		job.enabled = useBackupJob;
-	} else {
+	}
+	else {
 		job.enabled = false;
 	}
 
@@ -38,7 +38,7 @@ module.exports = function(client) {
 		});
 
 		job.start();
-	}
+	};
 
 	return job;
 };

@@ -26,15 +26,19 @@ module.exports = async function() {
 	}
 
 	/* Check Bishop Version */
-	await axios.get('https://api.github.com/repos/alexriley1223/bishop/tags')
-		.then(res => {
+	await axios
+		.get('https://api.github.com/repos/alexriley1223/bishop/tags')
+		.then((res) => {
 			const versions = res.data.sort((v1, v2) => semver.compare(v2.name, v1.name));
-			if(versions[0].name != `v${version}`) {
-				log.warn('BOOT', `⚠️  Bot is not the latest version. Please update! Yours: v${version} - Latest: ${versions[0].name}`);
+			if (versions[0].name != `v${version}`) {
+				log.warn(
+					'BOOT',
+					`⚠️  Bot is not the latest version. Please update! Yours: v${version} - Latest: ${versions[0].name}`,
+				);
 			}
 		})
-		.catch(err => {
-			log.warn('BOOT', `⚠️  Unable to fetch latest bot version. Proceed with caution!`);
+		.catch((err) => {
+			log.warn('BOOT', '⚠️  Unable to fetch latest bot version. Proceed with caution!');
 		});
 
 	/* Check all root configs exist and required fields exist */
@@ -42,7 +46,18 @@ module.exports = async function() {
 
 	const requiredFields = {
 		'bot.json': ['clientId', 'guildId', 'token', 'color', 'name'],
-		'database.json': ['useDatabase', 'useBackupJob', 'driver', 'host', 'database', 'name', 'username', 'password', 'logging', 'port'],
+		'database.json': [
+			'useDatabase',
+			'useBackupJob',
+			'driver',
+			'host',
+			'database',
+			'name',
+			'username',
+			'password',
+			'logging',
+			'port',
+		],
 	};
 
 	configs.forEach((e) => {
