@@ -1,3 +1,5 @@
+const chalk = require('chalk');
+
 class Logger {
 	get timestamp() {
 		return Intl.DateTimeFormat('en-US', {
@@ -12,19 +14,23 @@ class Logger {
 
 	error(type, error) {
 		const err = error instanceof Error ? error.message : error;
-		return console.error(`[ERRO][${type.toUpperCase()}][${this.timestamp}]: ${err}`);
+		return console.error(`[${chalk.bold.bgRed('ERRO')}][${type.toUpperCase()}][${chalk.dim(this.timestamp)}]: ${err}`);
 	}
 
 	warn(type, warning) {
-		return console.warn(`[WARN][${type.toUpperCase()}][${this.timestamp}]: ${warning}`);
+		return console.warn(chalk.underline(`[${chalk.bold.yellowBright('WARN')}][${type.toUpperCase()}][${chalk.dim(this.timestamp)}]: ${warning}`));
 	}
 
 	info(type, content) {
-		return console.log(`[INFO][${type.toUpperCase()}][${this.timestamp}]: ${content}`);
+		return console.log(`[${chalk.blueBright('INFO')}][${type.toUpperCase()}][${chalk.dim(this.timestamp)}]: ${content}`);
+	}
+
+	success(type, content) {
+		return console.log(`[${chalk.greenBright('SUCC')}][${type.toUpperCase()}][${chalk.dim(this.timestamp)}]: ${content}`);
 	}
 
 	debug(type, content) {
-		return console.log(`[DEBUG][${type.toUpperCase()}][${this.timestamp}]: ${content}`);
+		return console.log(`[${chalk.bgMagenta('DEBUG')}][${type.toUpperCase()}][${chalk.dim(this.timestamp)}]: ${content}`);
 	}
 }
 

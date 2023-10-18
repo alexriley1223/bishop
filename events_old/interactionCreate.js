@@ -11,7 +11,7 @@ module.exports = {
 		);
 
 		if (interaction.type === InteractionType.ApplicationCommand) {
-			const command = interaction.client.commands.get(interaction.commandName);
+			const command = interaction.client.bishop.commands.get(interaction.commandName);
 
 			try {
 				command.execute(interaction);
