@@ -5,165 +5,155 @@ const log = require('@helpers/logger');
 const fs = require('fs');
 
 module.exports = class BishopModule {
-    constructor(...opt) {
-        opt = opt[0];
-        this.name = opt.name;
-        this.description = opt.description;
-        this.version = opt.version;
-        this.enabled = opt.enabled;
-        this.directory = opt.directory;
-        this.init = opt.init;
-        this.author = opt.author;
+	constructor(...opt) {
+		opt = opt[0];
+		this.name = opt.name;
+		this.description = opt.description;
+		this.version = opt.version;
+		this.enabled = opt.enabled;
+		this.directory = opt.directory;
+		this.init = opt.init;
+		this.author = opt.author;
 
-        this.shortname = '';
-    }
+		this.shortname = '';
+	}
 
-    async runInit() {
-        await this.init();
-    }
+	async runInit() {
+		await this.init();
+	}
 
-    getCommands(client) {
-        if(!fs.existsSync(`${this.directory}/commands`)) {
-            log.info('Boot', `No command directory found for ${this.shortname}. Proceeding.`);
-            return [];
-        }
+	getCommands(client) {
+		if (!fs.existsSync(`${this.directory}/commands`)) {
+			log.info('Boot', `No command directory found for ${this.shortname}. Proceeding.`);
+			return [];
+		}
 
-        const commands = utils.getAllFiles(`${this.directory}/commands`);
+		const commands = utils.getAllFiles(`${this.directory}/commands`);
 
-        if (commands.length > 0) {
-            log.info(
-                'Boot',
-                `${commands.length} commands discovered.`,
-            );
+		if (commands.length > 0) {
+			log.info('Boot', `${commands.length} commands discovered.`);
 
-            let commandCount = 0;
+			let commandCount = 0;
 
-            for (const file of commands) {
-                const command = require(file);
+			for (const file of commands) {
+				const command = require(file);
 
-                if (command.enabled) {
-                    if ('data' in command && 'execute' in command) {
-                        const commandKeys = Array.from(client.commands.keys());
-                        if(commandKeys.includes(command.data.name)) {
-                            log.warn('Boot', `Conflicting commands names for ${command.data.name}. Overwriting with command from ${this.name}.`)
-                        }
-                        
-                        client.commands.set(command.data.name, command);
-                        client.jsonCommands.set(command.data.name, command.data.toJSON());
-                        commandCount++;
-                    }
-                    else {
-                        log.warn(
-                            'Boot',
-                            `The command at ${file} is missing required properties.`,
-                        );
-                    }
-                }
-            }
+				if (command.enabled) {
+					if ('data' in command && 'execute' in command) {
+						const commandKeys = Array.from(client.commands.keys());
+						if (commandKeys.includes(command.data.name)) {
+							log.warn(
+								'Boot',
+								`Conflicting commands names for ${command.data.name}. Overwriting with command from ${this.name}.`,
+							);
+						}
 
-            log.success('Boot', `${commandCount} commands loaded.`);
-        } else {
-            log.info('Boot', `No commands found for ${this.shortname}. Proceeding.`);
-            return [];
-        }
-    }
+						client.commands.set(command.data.name, command);
+						client.jsonCommands.set(command.data.name, command.data.toJSON());
+						commandCount++;
+					}
+					else {
+						log.warn('Boot', `The command at ${file} is missing required properties.`);
+					}
+				}
+			}
 
-    getEvents(client) {
-        if(!fs.existsSync(`${this.directory}/events`)) {
-            log.info('Boot', `No events directory found for ${this.shortname}. Proceeding.`);
-            return;
-        }
+			log.success('Boot', `${commandCount} commands loaded.`);
+		}
+		else {
+			log.info('Boot', `No commands found for ${this.shortname}. Proceeding.`);
+			return [];
+		}
+	}
 
-        const events = utils.getAllFiles(`${this.directory}/events`);
+	getEvents(client) {
+		if (!fs.existsSync(`${this.directory}/events`)) {
+			log.info('Boot', `No events directory found for ${this.shortname}. Proceeding.`);
+			return;
+		}
 
-        /* TODO: add event config check */
+		const events = utils.getAllFiles(`${this.directory}/events`);
 
-        if(events.length > 0) {
-            log.info(
-                'Boot',
-                `${events.length} events discovered.`,
-            );
-            
-            let eventCount = 0;
+		/* TODO: add event config check */
 
-            for (const file of events) {
-                const event = require(file);
+		if (events.length > 0) {
+			log.info('Boot', `${events.length} events discovered.`);
 
-                if(!client.events[event.name]) {
-                    client.events[event.name] = [];
-                }
+			let eventCount = 0;
 
-                client.events[event.name].push(file);
-                eventCount++;
-            }
+			for (const file of events) {
+				const event = require(file);
 
-            log.success('Boot', `${eventCount} events loaded.`);
-        } else {
-            log.info('Boot', `No events found for ${this.shortname}. Proceeding.`);
-            return;
-        }
-    }
+				if (!client.events[event.name]) {
+					client.events[event.name] = [];
+				}
 
-    getJobs(client) {
-        if(!fs.existsSync(`${this.directory}/jobs`)) {
-            log.info('Boot', `No jobs directory found for ${this.shortname}. Proceeding.`);
-            return;
-        }
+				client.events[event.name].push(file);
+				eventCount++;
+			}
 
-        const jobs = utils.getAllFiles(`${this.directory}/jobs`);
+			log.success('Boot', `${eventCount} events loaded.`);
+		}
+		else {
+			log.info('Boot', `No events found for ${this.shortname}. Proceeding.`);
+			return;
+		}
+	}
 
-        if(jobs.length > 0) {
+	getJobs(client) {
+		if (!fs.existsSync(`${this.directory}/jobs`)) {
+			log.info('Boot', `No jobs directory found for ${this.shortname}. Proceeding.`);
+			return;
+		}
 
-            log.info(
-                'Boot',
-                `${jobs.length} jobs discovered.`,
-            );
-            
-            let jobCount = 0;
+		const jobs = utils.getAllFiles(`${this.directory}/jobs`);
 
-            for (const file of jobs) {
-                const job = require(file);
-                if (job.enabled) {
-                    client.jobs.push(file);
-                    jobCount++;
-                }
-            }
-            log.success('Boot', `${jobCount} jobs loaded.`);
-        } else {
-            log.info('Boot', `No jobs found for ${this.shortname}. Proceeding.`);
-            return;
-        }
-    }
+		if (jobs.length > 0) {
+			log.info('Boot', `${jobs.length} jobs discovered.`);
 
-    getMigrations(client) {
-        if(!fs.existsSync(`${this.directory}/migrations`)) {
-            log.info('Boot', `No migrations directory found for ${this.shortname}. Proceeding.`);
-            return;
-        }
+			let jobCount = 0;
 
-        const migrations = utils.getAllFiles(`${this.directory}/migrations`);
+			for (const file of jobs) {
+				const job = require(file);
+				if (job.enabled) {
+					client.jobs.push(file);
+					jobCount++;
+				}
+			}
+			log.success('Boot', `${jobCount} jobs loaded.`);
+		}
+		else {
+			log.info('Boot', `No jobs found for ${this.shortname}. Proceeding.`);
+			return;
+		}
+	}
 
-        if(migrations.length > 0) {
+	getMigrations(client) {
+		if (!fs.existsSync(`${this.directory}/migrations`)) {
+			log.info('Boot', `No migrations directory found for ${this.shortname}. Proceeding.`);
+			return;
+		}
 
-            log.info(
-                'Boot',
-                `${migrations.length} migrations discovered.`,
-            );
-            
-            let migrationCount = 0;
+		const migrations = utils.getAllFiles(`${this.directory}/migrations`);
 
-            for (const file of migrations) {
-                client.migrations.push(file);
-                migrationCount++;
-            }
-            log.success('Boot', `${migrationCount} migrations loaded.`);
-        } else {
-            log.info('Boot', `No migrations found for ${this.shortname}. Proceeding.`);
-            return;
-        }
-    }
+		if (migrations.length > 0) {
+			log.info('Boot', `${migrations.length} migrations discovered.`);
 
-    async setShortName(name) {
-        this.shortname = name;
-    }
-}
+			let migrationCount = 0;
+
+			for (const file of migrations) {
+				client.migrations.push(file);
+				migrationCount++;
+			}
+			log.success('Boot', `${migrationCount} migrations loaded.`);
+		}
+		else {
+			log.info('Boot', `No migrations found for ${this.shortname}. Proceeding.`);
+			return;
+		}
+	}
+
+	async setShortName(name) {
+		this.shortname = name;
+	}
+};

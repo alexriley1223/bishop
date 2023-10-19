@@ -3,18 +3,20 @@ const log = require('@helpers/logger');
 const BishopEvent = require('@classes/BishopEvent');
 
 module.exports = new BishopEvent({
-    name: 'interactionCreate',
-    once: false,
-    init: (...opt) => {
-        const chatCommandInteraction = opt[0];
+	name: 'interactionCreate',
+	once: false,
+	init: (...opt) => {
+		const chatCommandInteraction = opt[0];
 
-        log.info(
+		log.info(
 			'Interaction',
 			`${chatCommandInteraction.user.username} in #${chatCommandInteraction.channel.name} triggered an interaction (/${chatCommandInteraction.commandName}).`,
 		);
 
 		if (chatCommandInteraction.type === InteractionType.ApplicationCommand) {
-			const command = chatCommandInteraction.client.bishop.commands.get(chatCommandInteraction.commandName);
+			const command = chatCommandInteraction.client.bishop.commands.get(
+				chatCommandInteraction.commandName,
+			);
 
 			try {
 				command.execute(chatCommandInteraction);
@@ -27,5 +29,5 @@ module.exports = new BishopEvent({
 				});
 			}
 		}
-    }
+	},
 });

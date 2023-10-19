@@ -5,19 +5,19 @@ module.exports = function(sequelize, DataTypes) {
 		await sequelize
 			.define('migrations', {
 				id: {
-				  type: DataTypes.INTEGER,
-				  autoIncrement: true,
-				  primaryKey: true,
+					type: DataTypes.INTEGER,
+					autoIncrement: true,
+					primaryKey: true,
 				},
 				name: {
-				  type: DataTypes.STRING,
-				  allowNull: false,
+					type: DataTypes.STRING,
+					allowNull: false,
 				},
 				batch: {
-				  type: DataTypes.INTEGER,
-				  allowNull: false,
+					type: DataTypes.INTEGER,
+					allowNull: false,
 				},
-			  })
+			})
 			.sync();
 	};
 

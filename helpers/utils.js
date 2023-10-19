@@ -85,5 +85,5 @@ module.exports = {
 	getAllFiles,
 	equals,
 	fireModuleEvents,
-	removeExtraLine
+	removeExtraLine,
 };

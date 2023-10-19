@@ -9,5 +9,5 @@ module.exports = new BishopEvent({
 	init: (...opt) => {
 		const client = opt[0];
 		log.success('LOGI', `Ready! Logged in as ${chalk.bgHex(color).bold(client.user.tag)}`);
-	}
+	},
 });
