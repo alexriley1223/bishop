@@ -25,6 +25,8 @@ module.exports = class BishopClient extends Client {
         this.bishop.logger = logger;
         this.bishop.modules = new Collection();
         this.bishop.events = {};
+        this.bishop.jobs = [];
+        this.bishop.migrations = [];
         this.bishop.commands = new Collection();
         this.bishop.jsonCommands = new Collection();
         this.bishop.color = color;
@@ -39,7 +41,12 @@ module.exports = class BishopClient extends Client {
     async boot() {
         await bootCheck();
         
-        ["moduleHandler", "eventHandler", "commandHandler"].forEach((handler) => {
+        let handlers = ["moduleHandler", "eventHandler", "commandHandler", "jobHandler"];
+
+        if(useDatabase) {
+            handlers.push("migrationHandler");
+        }
+        handlers.forEach((handler) => {
             let handlerFile = require(`@handlers/${handler}`);
             (async () => {
                 await handlerFile(this);

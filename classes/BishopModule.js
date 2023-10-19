@@ -33,7 +33,7 @@ module.exports = class BishopModule {
         if (commands.length > 0) {
             log.info(
                 'Boot',
-                `Starting to load ${this.name} commands. ${commands.length} discovered.`,
+                `${commands.length} commands discovered.`,
             );
 
             let commandCount = 0;
@@ -61,7 +61,7 @@ module.exports = class BishopModule {
                 }
             }
 
-            log.success('Boot', `${commandCount} ${this.name} commands loaded.`);
+            log.success('Boot', `${commandCount} commands loaded.`);
         } else {
             log.info('Boot', `No commands found for ${this.shortname}. Proceeding.`);
             return [];
@@ -71,19 +71,17 @@ module.exports = class BishopModule {
     getEvents(client) {
         if(!fs.existsSync(`${this.directory}/events`)) {
             log.info('Boot', `No events directory found for ${this.shortname}. Proceeding.`);
-            return [];
+            return;
         }
 
         const events = utils.getAllFiles(`${this.directory}/events`);
-
-        console.log(events);
 
         /* TODO: add event config check */
 
         if(events.length > 0) {
             log.info(
                 'Boot',
-                `Starting to load ${this.name} commands. ${events.length} discovered.`,
+                `${events.length} events discovered.`,
             );
             
             let eventCount = 0;
@@ -99,22 +97,70 @@ module.exports = class BishopModule {
                 eventCount++;
             }
 
-            log.info('Boot', `${eventCount} ${this.name} events loaded.`);
+            log.success('Boot', `${eventCount} events loaded.`);
         } else {
             log.info('Boot', `No events found for ${this.shortname}. Proceeding.`);
-            return [];
+            return;
         }
     }
 
-    async getJobs() {
-        if(!fs.existsSync(`@modules/${this.shortname}/jobs`)) {
+    getJobs(client) {
+        if(!fs.existsSync(`${this.directory}/jobs`)) {
+            log.info('Boot', `No jobs directory found for ${this.shortname}. Proceeding.`);
+            return;
+        }
+
+        const jobs = utils.getAllFiles(`${this.directory}/jobs`);
+
+        if(jobs.length > 0) {
+
+            log.info(
+                'Boot',
+                `${jobs.length} jobs discovered.`,
+            );
+            
+            let jobCount = 0;
+
+            for (const file of jobs) {
+                const job = require(file);
+                if (job.enabled) {
+                    client.jobs.push(file);
+                    jobCount++;
+                }
+            }
+            log.success('Boot', `${jobCount} jobs loaded.`);
+        } else {
             log.info('Boot', `No jobs found for ${this.shortname}. Proceeding.`);
-            return [];
+            return;
         }
     }
 
-    async getMigrations() {
-        
+    getMigrations(client) {
+        if(!fs.existsSync(`${this.directory}/migrations`)) {
+            log.info('Boot', `No migrations directory found for ${this.shortname}. Proceeding.`);
+            return;
+        }
+
+        const migrations = utils.getAllFiles(`${this.directory}/migrations`);
+
+        if(migrations.length > 0) {
+
+            log.info(
+                'Boot',
+                `${migrations.length} migrations discovered.`,
+            );
+            
+            let migrationCount = 0;
+
+            for (const file of migrations) {
+                client.migrations.push(file);
+                migrationCount++;
+            }
+            log.success('Boot', `${migrationCount} migrations loaded.`);
+        } else {
+            log.info('Boot', `No migrations found for ${this.shortname}. Proceeding.`);
+            return;
+        }
     }
 
     async setShortName(name) {

@@ -1,5 +1,5 @@
-module.exports = (sequelize, DataTypes) => {
-	sequelize
+module.exports = (sequelize, DataTypes) => async function(){
+	await sequelize
 		.define('migrations', {
 			id: {
 				type: DataTypes.INTEGER,

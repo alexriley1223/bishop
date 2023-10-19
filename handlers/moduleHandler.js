@@ -25,6 +25,8 @@ module.exports = async (client) => {
             modFile.init();
             modFile.getCommands(client.bishop);
             modFile.getEvents(client.bishop);
+            modFile.getJobs(client.bishop);
+            modFile.getMigrations(client.bishop);
         }
     });
 }
