@@ -10,7 +10,7 @@ module.exports = new BishopEvent({
 
 		log.info(
 			'Interaction',
-			`${chatCommandInteraction.user.username} in #${chatCommandInteraction.channel.name} triggered an interaction (/${chatCommandInteraction.commandName}).`,
+			`${chatCommandInteraction.user.username} in #${chatCommandInteraction.channel.name} triggered an interaction (${(chatCommandInteraction.commandName) ? '/' + chatCommandInteraction.commandName : 'Component Click'}).`,
 		);
 
 		if (chatCommandInteraction.type === InteractionType.ApplicationCommand) {
