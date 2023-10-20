@@ -48,5 +48,6 @@ Database migrations follow the following format: <br />
 
 ### Installing Packages
 Clone or download the .zip of the package. Place the package folder inside the modules directory. Configure any options and restart Bishop - make sure the module enabled attribute is set to `true`. Re-run `npm install` upon installation of any new packages.
+
 ### Issues
 This repository is actively maintained by me. If you run into any issues, feel free to <a href="https://github.com/alexriley1223/bishop/issues/new">create a new issue here</a>.

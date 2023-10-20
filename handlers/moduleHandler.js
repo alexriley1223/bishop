@@ -38,6 +38,11 @@ module.exports = async (client) => {
 			modFile.getEvents(client.bishop);
 			modFile.getJobs(client.bishop);
 			modFile.getMigrations(client.bishop);
+
+			client.bishop.logger.success(
+				'BOOT',
+				`Done Initializing ${modFile.name} (v${modFile.version})! `,
+			);
 		}
 	});
 };

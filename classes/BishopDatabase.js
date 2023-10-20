@@ -12,9 +12,9 @@ module.exports = class BishopDatabase extends Sequelize {
 				host: databaseConfiguration.host,
 				port: databaseConfiguration.port,
 				dialect: databaseConfiguration.driver,
-				logging: (str) => {
+				logging: (databaseConfiguration.logging) ? (str) => {
 					log.info('Sequ', str);
-				},
+				} : false,
 				storage: `./database/${databaseConfiguration.name}.sqlite`,
 			},
 		);

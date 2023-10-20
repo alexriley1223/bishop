@@ -84,7 +84,7 @@ module.exports = class BishopClient extends Client {
 					throw Error('Failed to create load order file.');
 				}
 				else {
-					throw '✅ Created load order file successfully. Reloading application.';
+					throw 'Created load order file successfully. Reloading application.';
 				}
 			});
 
@@ -108,7 +108,7 @@ module.exports = class BishopClient extends Client {
 			super.login(token);
 		}
 		catch (e) {
-			throw Error('❌ Failed to login Bot. Please try again.');
+			throw Error('Failed to login Bot. Please try again.');
 		}
 	}
 };
