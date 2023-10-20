@@ -9,7 +9,6 @@ module.exports = (client) => {
 		enabled: isModuleEnabled,
 		author: 'Alex Riley',
 		directory: __dirname,
-		init: function() {
-		},
+		init: function() {},
 	});
 };

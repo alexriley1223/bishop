@@ -129,7 +129,10 @@ module.exports = class BishopModule {
 
 	getMigrations(client) {
 		if (!fs.existsSync(`${this.directory}/migrations`)) {
-			client.logger.info('Boot', `↳ No migrations directory found for ${this.shortname}. Proceeding.`);
+			client.logger.info(
+				'Boot',
+				`↳ No migrations directory found for ${this.shortname}. Proceeding.`,
+			);
 			return;
 		}
 

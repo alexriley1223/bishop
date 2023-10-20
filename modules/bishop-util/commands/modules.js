@@ -7,10 +7,12 @@ const { commands } = require('../config.json');
 module.exports = new BishopCommand({
 	enabled: commands[getParentDirectoryString(__filename, __dirname)],
 	data: new SlashCommandBuilder()
-	.setName('modules')
-	.setDescription('Show current loaded Bishop modules'),
+		.setName('modules')
+		.setDescription('Show current loaded Bishop modules'),
 	execute: async function(interaction) {
-		const modArray = [...interaction.client.bishop.modules.values()].map(a => a['name'] + " (" + a['version'] + ")");
+		const modArray = [...interaction.client.bishop.modules.values()].map(
+			(a) => a['name'] + ' (' + a['version'] + ')',
+		);
 
 		const queueEmbed = new EmbedBuilder()
 			.setColor(`${interaction.client.bishop.color}`)
@@ -20,9 +22,8 @@ module.exports = new BishopCommand({
 			.setFooter({
 				text: `Pulled using the ${interaction.client.bishop.name} Bot`,
 				iconURL: interaction.user.displayAvatarURL({ dynamic: true }),
-		});
+			});
 
 		await interaction.reply({ ephemeral: true, embeds: [queueEmbed] });
 	},
 });
-

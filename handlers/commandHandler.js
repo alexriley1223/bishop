@@ -14,7 +14,10 @@ module.exports = async (client) => {
 			body: client.bishop.jsonCommands,
 		});
 
-		client.bishop.logger.info('BOOT', `Successfully reloaded ${data.length} application (/) commands.`);
+		client.bishop.logger.info(
+			'BOOT',
+			`Successfully reloaded ${data.length} application (/) commands.`,
+		);
 	}
 	catch (error) {
 		throw Error('Failed to register application commands. Please try again.');

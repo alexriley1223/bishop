@@ -5,7 +5,7 @@ const path = require('path');
 const { useBackupJob, driver } = require('@config/database.json');
 
 module.exports = new BishopJob({
-	enabled: (driver && driver == 'sqlite') ? useBackupJob : false,
+	enabled: driver && driver == 'sqlite' ? useBackupJob : false,
 	init: async function(client) {
 		const job = new cron.CronJob('* * * * *', () => {
 			const currentDate = new Date().toISOString().split('T')[0];
@@ -31,5 +31,5 @@ module.exports = new BishopJob({
 		});
 
 		job.start();
-	}
+	},
 });
