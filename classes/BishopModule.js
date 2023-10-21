@@ -17,8 +17,8 @@ module.exports = class BishopModule {
 		this.shortname = '';
 	}
 
-	async runInit() {
-		await this.init();
+	async runInit(client) {
+		await this.init(client);
 	}
 
 	getCommands(client) {

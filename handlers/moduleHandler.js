@@ -33,7 +33,7 @@ module.exports = async (client) => {
 			);
 
 			/* Initialize Module & pull commands, jobs, events, and migrations */
-			modFile.init();
+			modFile.init(client);
 			modFile.getCommands(client.bishop);
 			modFile.getEvents(client.bishop);
 			modFile.getJobs(client.bishop);
