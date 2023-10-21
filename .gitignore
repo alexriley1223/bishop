@@ -149,4 +149,7 @@ pm2.config.js
 # Load Order
 load_order.txt
 
+# Lock file
+package-lock.json
+
 # End of https://www.toptal.com/developers/gitignore/api/node

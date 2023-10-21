@@ -1,6 +1,6 @@
 {
   "name": "bishop",
-  "version": "5.0.0",
+  "version": "5.0.1",
   "description": "Self-hosted Discord bot written in Node.js using Discord.js",
   "main": "app.js",
   "scripts": {

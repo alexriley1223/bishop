@@ -41,7 +41,7 @@ module.exports = class BishopClient extends Client {
 	async boot() {
 		await bootCheck();
 
-		const handlers = ['moduleHandler', 'eventHandler', 'commandHandler', 'jobHandler'];
+		const handlers = ['moduleHandler', 'eventHandler', 'jobHandler', 'commandHandler'];
 
 		if (useDatabase) {
 			handlers.push('migrationHandler');
@@ -105,7 +105,7 @@ module.exports = class BishopClient extends Client {
 
 	async login() {
 		try {
-			super.login(token);
+			await super.login(token);
 		}
 		catch (e) {
 			throw Error('Failed to login Bot. Please try again.');
