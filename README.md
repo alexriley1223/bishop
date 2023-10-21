@@ -1,6 +1,6 @@
 <div align="center">
 	<p>
-		<img src="https://raw.githubusercontent.com/alexriley1223/bishop/rework/static/bishopbanner.png" alt="Bishop Discord Bot" />
+		<img src="https://raw.githubusercontent.com/alexriley1223/bishop/master/static/bishopbanner.png" alt="Bishop Discord Bot" />
 	</p>
 	<br />
 	<p>
