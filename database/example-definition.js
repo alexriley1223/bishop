@@ -1,8 +1,6 @@
 module.exports = function(sequelize, DataTypes) {
 	const definition = {};
 
-	definition.enabled = false;
-
 	definition.define = async function() {
 		/* Define Table and Sync */
 		await sequelize

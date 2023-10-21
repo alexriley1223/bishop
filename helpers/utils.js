@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
+/* Get full path to file from directory to directory - used for modules (database, commands, etc.) to get subdirectories */
 function getParentDirectoryString(file, dir, type = 'commands') {
 	const dirString = [];
 	const explodeDir = dir.split('/');
@@ -18,6 +19,7 @@ function getParentDirectoryString(file, dir, type = 'commands') {
 	}
 }
 
+/* Recursively get all files and files in subdirectories given a path */
 function getAllFiles(dirPath, arrayOfFiles) {
 	const files = fs.readdirSync(dirPath);
 
@@ -59,7 +61,7 @@ function equals(a, b) {
 	});
 }
 
-/* Inject Module Events */
+/* Inject module events */
 function fireModuleEvents(client, eventName, ...params) {
 	if (client.bishop.events && client.bishop.events[eventName]) {
 		client.bishop.events[eventName].forEach((event) => {
@@ -69,9 +71,19 @@ function fireModuleEvents(client, eventName, ...params) {
 	return true;
 }
 
+/* Remove extra whitespace at the end of retrieved file content */
+function removeExtraLine(arr) {
+	if (arr[arr.length - 1] == '') {
+		arr.pop();
+	}
+
+	return arr;
+}
+
 module.exports = {
 	getParentDirectoryString,
 	getAllFiles,
 	equals,
 	fireModuleEvents,
+	removeExtraLine,
 };

@@ -138,6 +138,7 @@ modules/*
 # Database
 backup/
 database/*
+!database/*.js
 
 # Temp files
 tmp/

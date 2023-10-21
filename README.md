@@ -35,6 +35,10 @@
 5. Run Bishop
   ``npm run start:prod``
 
+### Migrations
+Database migrations follow the following format: <br />
+`Y_d_m_His_[name]`
+
 ### Officially Supported Packages
 - <a href="https://github.com/alexriley1223/bishop-radio">Radio Player</a>
 - <a href="https://github.com/alexriley1223/bishop-noaaday1">NOAA Day 1 Outlook Scraper</a>
@@ -44,5 +48,6 @@
 
 ### Installing Packages
 Clone or download the .zip of the package. Place the package folder inside the modules directory. Configure any options and restart Bishop - make sure the module enabled attribute is set to `true`. Re-run `npm install` upon installation of any new packages.
+
 ### Issues
 This repository is actively maintained by me. If you run into any issues, feel free to <a href="https://github.com/alexriley1223/bishop/issues/new">create a new issue here</a>.
