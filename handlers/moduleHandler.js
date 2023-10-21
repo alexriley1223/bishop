@@ -25,10 +25,10 @@ module.exports = async (client) => {
 				'BOOT',
 				`Initializing ${modFile.name} (v${modFile.version}) by ${modFile.author} - ${modFile.description}`,
 			);
-
+			
 			/* Add to module collection - incrementing index to hold load order */
 			client.bishop.modules.set(
-				client.bishop.modules.size > 0 ? client.bishop.modules.size - 1 : 0,
+				client.bishop.modules.size > 0 ? client.bishop.modules.size + 1 : 0,
 				modFile,
 			);
 
