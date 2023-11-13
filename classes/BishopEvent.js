@@ -7,17 +7,17 @@ module.exports = class BishopEvent {
 		this.init = opt.init;
 	}
 
-	fireModuleEvents(client, ...opt) {
+	async fireModuleEvents(client, ...opt) {
 		if (client.bishop.events[this.name]) {
 			client.bishop.events[this.name].forEach(function(event) {
 				const moduleEvent = require(event);
-				moduleEvent.init(client, opt[0]);
+				moduleEvent.init(client, ...opt);
 			});
 		}
 	}
 
 	async execute(client, ...opt) {
-		await this.init(opt[0]);
-		await this.fireModuleEvents(client, opt[0]);
+		await this.init(...opt);
+		await this.fireModuleEvents(client, ...opt);
 	}
 };

@@ -7,6 +7,6 @@ module.exports = class BishopModuleEvent {
 	}
 
 	async execute(client, ...opt) {
-		this.init(client, opt[0]);
+		this.init(client, ...opt);
 	}
 };
