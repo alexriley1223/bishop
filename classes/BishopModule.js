@@ -155,6 +155,34 @@ module.exports = class BishopModule {
 		}
 	}
 
+	getModels(client) {
+		if (!fs.existsSync(`${this.directory}/models`)) {
+			client.logger.info(
+				'Boot',
+				`↳ No models directory found for ${this.shortname}. Proceeding.`,
+			);
+			return;
+		}
+
+		const models = utils.getAllFiles(`${this.directory}/models`);
+
+		if (models.length > 0 && client.db) {
+			client.logger.info('Boot', `↳ ${models.length} models discovered.`);
+
+			let modelCount = 0;
+
+			for (const file of models) {
+				require(file)(client.db, client.db.datatypes);
+				modelCount++;
+			}
+			client.logger.success('Boot', `↳ ${modelCount} models loaded.`);
+		}
+		else {
+			client.logger.info('Boot', `↳ No models found for ${this.shortname}. Proceeding.`);
+			return;
+		}
+	}
+
 	async setShortName(name) {
 		this.shortname = name;
 	}

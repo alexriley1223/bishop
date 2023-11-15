@@ -38,6 +38,7 @@ module.exports = async (client) => {
 			modFile.getEvents(client.bishop);
 			modFile.getJobs(client.bishop);
 			modFile.getMigrations(client.bishop);
+			modFile.getModels(client.bishop);
 
 			client.bishop.logger.success(
 				'BOOT',

@@ -35,9 +35,33 @@
 5. Run Bishop
   ``npm run start:prod``
 
-### Migrations
-Database migrations follow the following format: <br />
-`Y_d_m_His_[name]`
+## Modules 
+
+### Initial Setup
+Each Bishop module should be initialized by a `module.js` file. The stock Bishop Utility module is a great starting place.
+Bishop modules support the following directories, corresponding to their functionality:
+- commands
+- events
+- jobs
+- migrations
+- models
+
+Examples of each can be found in the examples directory.
+
+### Commands
+Commands follow a structure similar to the standard Discord.js setup. Command files should be placed in a `/commands` directory and can be nested.
+
+### Jobs
+The cron package is recommended here. All jobs should be placed in a `/jobs` directory.
+
+### Events
+All Bishop module events fire after the core Bishop client events fire. They should be structure as shown in the example and placed in a `/events` directory.
+
+### Migrations & Models
+Database migrations should be placed in a `/migrations` module directory and follow the following format: <br />
+`Y_d_m_His_[name]` <br />
+
+Models should be placed in a `/models` module directory and follow the example model found in the database directory
 
 ### Officially Supported Packages
 - <a href="https://github.com/alexriley1223/bishop-radio">Radio Player</a>
