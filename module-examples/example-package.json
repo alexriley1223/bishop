@@ -1,0 +1,10 @@
+{
+    "name": "bishop-module",
+    "version": "1.0.0",
+    "description": "Package file example",
+    "author": "Alex Riley",
+    "license": "GNU GENERAL PUBLIC LICENSE",
+    "dependencies": {
+        "dependency": "1.0.0"
+    }
+}
