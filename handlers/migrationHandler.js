@@ -1,7 +1,7 @@
 const migrateDatabase = require('@handlers/database/migrateDatabase');
 
-module.exports = (client) => {
-	migrateDatabase(client).then(() => {
+module.exports = async (client) => {
+	await migrateDatabase(client).then(() => {
 		client.bishop.db.getMigrations().then(() => {
 			let newMigrations = client.bishop.migrations.filter(
 				(val) =>
@@ -10,15 +10,12 @@ module.exports = (client) => {
 			newMigrations = newMigrations.sort();
 
 			newMigrations.forEach((migration) => {
-				const migrationDefinition = require(migration)(
-					client.bishop.db,
-					client.bishop.db.datatypes,
-				);
+				const migrationDefinition = require(migration);
 				const migrationName = migration.split('/migrations/')[1].replace('.js', '');
-
+				
 				try {
 					client.bishop.logger.info('Boot', `Starting to migrate ${migrationName}.`);
-					migrationDefinition();
+					migrationDefinition.up(client.bishop.db);
 					client.bishop.db.models.migrations.create({
 						name: migrationName,
 						batch: client.bishop.db.batchNumber,
@@ -26,7 +23,7 @@ module.exports = (client) => {
 					client.bishop.logger.success('Boot', `Successfully migrated ${migrationName}.`);
 				}
 				catch (error) {
-					client.bishop.logger.error('Boot', `Failed to migrate ${migrationName}.`);
+					client.bishop.logger.error('Boot', `Failed to migrate ${migrationName}.\n${error}`);
 				}
 			});
 		});
