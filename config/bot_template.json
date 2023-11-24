@@ -3,5 +3,6 @@
   "guildId": "",
   "token": "",
   "color": "#FFFFFF",
-  "name": "Bishop"
+  "name": "Bishop",
+  "timezone": "America/Indiana/Indianapolis"
 }
