@@ -8,7 +8,7 @@ module.exports = new BishopCommand({
 	enabled: commands[getParentDirectoryString(__filename, __dirname)],
 	data: new SlashCommandBuilder().setName('version').setDescription('Show current bot version'),
 	execute: async function(interaction) {
-		interaction.reply({
+		await interaction.reply({
 			content: `${interaction.client.bishop.name} is currently running on v${version}!`,
 			ephemeral: true,
 		});

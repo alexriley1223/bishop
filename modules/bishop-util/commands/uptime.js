@@ -8,7 +8,7 @@ module.exports = new BishopCommand({
 	enabled: commands[getParentDirectoryString(__filename, __dirname)],
 	data: new SlashCommandBuilder().setName('uptime').setDescription('Show current bot uptime'),
 	execute: async function(interaction) {
-		interaction.reply({
+		await interaction.reply({
 			content: `${interaction.client.bishop.name} has been up for ${prettyMilliseconds(
 				interaction.client.uptime,
 			)}!`,
