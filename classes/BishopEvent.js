@@ -11,7 +11,10 @@ module.exports = class BishopEvent {
 		if (client.bishop.events[this.name]) {
 			client.bishop.events[this.name].forEach(function(event) {
 				const moduleEvent = require(event);
-				moduleEvent.init(client, ...opt);
+
+				if(moduleEvent.enabled) {
+					moduleEvent.init(client, ...opt);
+				}
 			});
 		}
 	}
