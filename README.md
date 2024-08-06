@@ -69,6 +69,7 @@ Models should be placed in a `/models` module directory and follow the example m
 - <a href="https://github.com/alexriley1223/bishop-rustitemshop">Rust Item Store Updates (Rust SCMM Scraper)</a>
 - <a href="https://github.com/alexriley1223/bishop-points">Points & Games</a>
 - <a href="https://github.com/alexriley1223/bishop-assigner">Role Assigner</a>
+- <a href="https://github.com/alexriley1223/bishop-pulseaudio-player">PulseAudio Player</a>
 
 ### Issues
 This repository is actively maintained by me. If you run into any issues, feel free to <a href="https://github.com/alexriley1223/bishop/issues/new">create a new issue here</a>.
