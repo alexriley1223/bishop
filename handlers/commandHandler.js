@@ -20,6 +20,6 @@ module.exports = async (client) => {
 		);
 	}
 	catch (error) {
-		throw Error('Failed to register application commands. Please try again.');
+    throw Error(`Failed to register application commands. Please try again. ${error}`);
 	}
 };

@@ -1,5 +1,10 @@
 {
   "isModuleEnabled": true,
+  "commands": {
+    "modules.js": true,
+    "uptime.js": true,
+    "version.js": true
+  },
   "events": {
     "ready.js": true
   }
